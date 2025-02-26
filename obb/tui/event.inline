@@ -1,0 +1,41 @@
+#pragma once
+
+#include <lus/ui/event.h> // NOLINT(misc-header-include-cycle)
+
+
+namespace lus::ui
+{
+////////////////////////////////////////////////////////////
+template <typename EVT> event::event(const EVT& evt)
+{
+    static_assert(is_event_type<EVT>, "EVT must be a subtype of ui::event");
+    if constexpr (is_event_type<EVT>)
+        data = evt;
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename EVT> bool event::is() const
+{
+    static_assert(is_event_type<EVT>, "EVT must be a subtype of ui::event");
+    if constexpr (is_event_type<EVT>)
+        return std::holds_alternative<EVT>(data);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename EVT> const EVT* event::get() const
+{
+    static_assert(is_event_type<EVT>, "TEventSubtype must be a subtype of sf::Event");
+    if constexpr (is_event_type<EVT>)
+        return std::get_if<EVT>(&data);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T> decltype(auto) event::visit(T&& visitor) const
+{
+    return std::visit(std::forward<T>(visitor), data);
+}
+
+} // namespace lus::ui
