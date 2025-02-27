@@ -27,7 +27,7 @@ using namespace std::literals;
 namespace obb
 {
 
-class LUSLEXERLIB sscan
+class OBBLEXERLIB sscan
 {
     const char* m_end{nullptr};
     const char* m_pos{nullptr};
@@ -38,7 +38,7 @@ public:
 
     using iterator = const char*;
 
-    struct LUSLEXERLIB  [[maybe_unused]] context
+    struct OBBLEXERLIB  [[maybe_unused]] context
     {
         sscan::iterator m_pos{nullptr};
         sscan::iterator m_begin{nullptr};
@@ -46,13 +46,13 @@ public:
         //...
     };
 
-    struct LUSLEXERLIB numeric
+    struct OBBLEXERLIB numeric
     {
         private:
         static sscan empty;
         public:
 
-        struct LUSLEXERLIB details
+        struct OBBLEXERLIB details
         {
             std::string_view seq;
             enum class base_size : char
@@ -117,7 +117,7 @@ public:
     };
 
 public:
-    struct LUSLEXERLIB location_data
+    struct OBBLEXERLIB location_data
     {
         // { \n; \n\r; \r\n; \r }
         std::size_t line{0};

@@ -26,7 +26,7 @@
 namespace obb::est 
 {
 
-class LUSESTLIB expr : public bloc
+class OBBESTLIB expr : public bloc
 {
     lexer       _lexer_;
     token_table _token_table_;

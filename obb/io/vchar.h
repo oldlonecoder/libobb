@@ -23,16 +23,16 @@
  #include <memory>
  #include <vector>
  #include <obb/geometry.h>
- #include <obb/ui/export.h>
+ #include <obb/io/export.h>
 
  using namespace obb::integers;
 
- namespace obb::ui
+ namespace obb::io
  {
 
  class console;
 
- struct LUSTUILIB vchar
+ struct OBBIOLIB vchar
  {
      u32 d{0x8003A020};
 
@@ -71,7 +71,7 @@
      static constexpr int BGShift = 0x10;
      static constexpr int ATShift = 0x18;
 
-     struct LUSTUILIB bloc
+     struct OBBIOLIB bloc
      {
          // --- CONFIGS AND INTERNAL DATA--------------
          color::pair             colours{};

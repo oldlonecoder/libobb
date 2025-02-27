@@ -22,7 +22,7 @@
 namespace obb
 {
 
-class LUSLEXERLIB  token_table
+class OBBLEXERLIB  token_table
 {
     
 protected:

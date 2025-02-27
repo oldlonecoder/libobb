@@ -28,7 +28,7 @@ namespace obb::io
  * \brief The mouse data struct
  *
  */
-struct LUSIOLIB mouse
+struct OBBIOLIB mouse
 {
 
 
@@ -58,14 +58,14 @@ struct LUSIOLIB mouse
     mouse& operator=(const mouse& cpy) = default;
     mouse& operator=(mouse&& mref) noexcept = default;
 
-    struct LUSIOLIB buttons
+    struct OBBIOLIB buttons
     {
         u8 left  : 2; // 0 = up; 1 = down; 2 = pressed event; 3 = released event;
         u8 mid   : 2; // 0 = up; 1 = down; 2 = pressed event; 3 = released event;
         u8 right : 2; // 0 = up; 1 = down; 2 = pressed event; 3 = released event;
     }button{0,0,0};
 
-    struct LUSIOLIB
+    struct OBBIOLIB
     {
         u8 shift :1;
         u8 alt   :1;

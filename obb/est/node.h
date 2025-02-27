@@ -31,7 +31,7 @@ namespace obb::est
 
 
 
-class LUSESTLIB node : public obb::object
+class OBBESTLIB node : public obb::object
 {
 protected:
     alu*    _a_ {nullptr};  ///< alu / playing the role of accumulator for this node.
@@ -42,7 +42,7 @@ protected:
     friend class bloc;
     friend class expr;
     friend class variable;
-    struct LUSESTLIB storage_type
+    struct OBBESTLIB storage_type
     {
         integers::u8 lv    : 1; ///< 0 = rvalue non-assignable (such as const,leaf). 1= left value; assignable.
         integers::u8 acc   : 1; ///< 1 = this node owns its acc storage - so will delete it in the destructor.

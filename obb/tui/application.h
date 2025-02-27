@@ -24,7 +24,7 @@ namespace obb::ui
 {
 
 
-class LUSTUILIB application
+class OBBTUILIB application
 {
     std::string _id{};
     obb::string::view_list _args{};

@@ -65,7 +65,7 @@ namespace obb::est
 
 using namespace integers;
 
-class LUSESTLIB grammar
+class OBBESTLIB grammar
 {
 public:
 
@@ -78,8 +78,8 @@ public:
 
 
 
-    struct LUSESTLIB rule;
-    struct LUSESTLIB props
+    struct OBBESTLIB rule;
+    struct OBBESTLIB props
     {
         u8 z :1; ///< zero or more := optional; '*'
         u8 r :1; ///< repeat := '+' 
@@ -168,7 +168,7 @@ public:
     };
 
 
-    struct LUSESTLIB term 
+    struct OBBESTLIB term 
     {
         grammar::props _props_;
         enum class type 
@@ -331,7 +331,7 @@ public:
     };
 
 
-    struct LUSESTLIB term_sequence  
+    struct OBBESTLIB term_sequence  
     {
         term::list terms;
         term::iterator index{terms.begin()};
@@ -412,7 +412,7 @@ public:
     };
 
 
-    struct LUSESTLIB rule 
+    struct OBBESTLIB rule 
     {
         std::string name{};
         term_sequence::list sequences{};

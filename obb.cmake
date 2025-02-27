@@ -41,6 +41,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
                            $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}++")
+
 target_compile_definitions("${PROJECT_NAME}" PUBLIC "${PROJECT_NAME}_DEBUG=$<CONFIG:Debug>")
 include(GenerateExportHeader)
 generate_export_header(${PROJECT_NAME} EXPORT_FILE_NAME "${PROJECT_NAME}_export")

@@ -26,7 +26,7 @@ namespace obb
 
 
 
-struct LUSLEXERLIB lex_token
+struct OBBLEXERLIB lex_token
 {
     using list      = std::vector<lex_token>;
     using iterator  = lex_token::list::iterator;
@@ -46,7 +46,7 @@ struct LUSLEXERLIB lex_token
     void                         numeric_tr();
     // ------------------------------------------------
 
-    struct LUSLEXERLIB location_data
+    struct OBBLEXERLIB location_data
     {
         [[maybe_unused]] size_t                    line{0};
         [[maybe_unused]] size_t                    column{0};
@@ -61,7 +61,7 @@ struct LUSLEXERLIB lex_token
 
 
 
-    struct LUSLEXERLIB token_flags
+    struct OBBLEXERLIB token_flags
     {
         uint8_t V: 1; // This token is a usable value into expression.
         uint8_t S: 1; // Post semantic parser: Left-Assignable Object

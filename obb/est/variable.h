@@ -23,7 +23,7 @@
 
 namespace obb::est {
 
-class LUSESTLIB variable : public node
+class OBBESTLIB variable : public node
 {
     std::stack<alu> _stack_{};
 

@@ -11,14 +11,14 @@ pragma warning(disable : 4996)
 #   define _CRT_SECURE_NO_WARNINGS
 #   define _SCL_SECURE_NO_WARNINGS
 #   define NOMINMAX
-#   if defined(LUSESTLIB_EXPORTS)
-#       define LUSESTLIB __declspec(dllexport)
+#   if defined(OBBESTLIB_EXPORTS)
+#       define OBBESTLIB __declspec(dllexport)
 #   else
-#       define LUSESTLIB __declspec(dllimport)
+#       define OBBESTLIB __declspec(dllimport)
 #   endif
 
 #else
-#   define LUSESTLIB
+#   define OBBESTLIB
 #endif
 
 // ------------ Mandatory includes ------------

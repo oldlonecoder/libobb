@@ -5,7 +5,7 @@
 #include <sys/ioctl.h>
 
 
-#include <obb/ui/console.h>
+#include <obb/io/console.h>
 
 //#include <thread>
 //#include <mutex>
@@ -14,7 +14,7 @@
 //#include <obb/io/ansi_parser.h>
 //
 
-namespace obb::ui
+namespace obb::io
 {
 
 termios  console::saved_st{}, console::new_term{};
@@ -237,7 +237,7 @@ rem::cc console::init_stdinput()
     if(auto r = _console->_listener.open(); !r)
         return r;
     auto [r,ifd] = _console->_listener.attach({"stdin",STDIN_FILENO,1024,io::lfd::IMM|io::lfd::READ, EPOLLIN|EPOLLHUP|EPOLLERR});
-    ifd.set_read_notify(_console, &console::parse_stdin);
+    //ifd.set_read_notify(_console, &console::parse_stdin);
     ifd.activate();
     return rem::cc::ready;
 }
@@ -253,9 +253,9 @@ std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
         return {r,{}};
     }
 
-    io::ansi_parser inparser;
-    auto [c,dt] = inparser.parse(in);
-    if(inparser.is<io::mouse>()){
+    io::ansi_parser parser;
+    auto [c,dt] = parser.parse(in);
+    if(parser.is<io::mouse>()){
         dt.mev.button.left = (
             mev.button.left != dt.mev.button.left ? (
                 dt.mev.button.left ? io::mouse::BUTTON_PRESSED
@@ -282,41 +282,6 @@ std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
 
     return {rem::cc::unhandled,{}};
 }
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief console::parse_stdin
-/// \param ifd
-/// \return
-///
-rem::action console::parse_stdin(io::lfd& ifd)
-{
-    auto z = ifd.size();
-    book::info() << " stdin : " << z << " bytes waiting..." << book::endl;
-    u8 b;
-    std::vector<int> seq;
-
-    if (z) do{
-            ifd >> b;
-            if ((z==1) && (b==0x1b)){
-                _console->_listener.terminate();
-                book::info() << "stdin polling terminated: ESC pressed..." << book::endl;
-                ifd.terminate();
-                return rem::action::end;
-                break;
-            }
-            seq.push_back(b);
-            auto str  = obb::string::bytes(seq);
-            book::write() << str << book::endl;
-            std::cout << str << std::endl;
-        }while (!ifd.empty());
-
-    return rem::action::cont;
-}
-
 
 
 }// namespace lux::io

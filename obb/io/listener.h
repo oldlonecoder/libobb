@@ -22,7 +22,7 @@
 namespace obb::io
 {
 
-class LUSIOLIB listener
+class OBBIOLIB listener
 {
 
     lfd::list _fds{};

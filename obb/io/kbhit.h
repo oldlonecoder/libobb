@@ -31,7 +31,7 @@ namespace obb::io
 using namespace obb::integers;
 
 
-struct LUSIOLIB kbhit
+struct OBBIOLIB kbhit
 {
 
     enum enums : u8
@@ -116,7 +116,7 @@ struct LUSIOLIB kbhit
         CTRL_Y,
         CTRL_Z,
         CTRL_MINUS,
-        CTRL_PLUS,
+        CTRL_POBB,
         CTRL_PERIOD,
         CTRL_SLASH,
         CTRL_BACKSLASH,
@@ -160,7 +160,7 @@ struct LUSIOLIB kbhit
         CTRL_ALT_Y,
         CTRL_ALT_Z,
         CTRL_ALT_MINUS,
-        CTRL_ALT_PLUS,
+        CTRL_ALT_POBB,
         CTRL_ALT_PERIOD,
         CTRL_ALT_SLASH,
         CTRL_ALT_BACKSLASH,
@@ -185,7 +185,7 @@ struct LUSIOLIB kbhit
         NO_KEY,
     };
 
-    struct LUSIOLIB state
+    struct OBBIOLIB state
     {
         u8 shift : 1;
         u8 ctrl  : 1;

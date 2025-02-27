@@ -31,7 +31,7 @@
 namespace obb::io
 {
 
-class LUSIOLIB tcp_socket : public object
+class OBBIOLIB tcp_socket : public object
 {
     hostent*                m_hentry;
     sockaddr_in             m_addr_in;

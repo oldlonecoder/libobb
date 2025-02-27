@@ -23,7 +23,7 @@
 namespace obb::est
 {
 
-class LUSESTLIB bloc : public node
+class OBBESTLIB bloc : public node
 {
 
 public:

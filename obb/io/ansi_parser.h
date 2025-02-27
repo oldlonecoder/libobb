@@ -32,7 +32,7 @@ namespace obb::io
 /// \note We parse either kbhit or mouse...no UTF-x yet, I acknowlege it is mandatory...
 /// \author oldlonecoder Serge Lussier (serge.lussier@oldlonecoder.club)
 ///
-class LUSIOLIB ansi_parser
+class OBBIOLIB ansi_parser
 {
 
     static constexpr u8 KEV=1;

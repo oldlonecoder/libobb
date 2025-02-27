@@ -359,7 +359,7 @@ constexpr Index Noop_      = 21;
 
 } // namespace operand
 
-struct LUSLEXERLIB lexer_component
+struct OBBLEXERLIB lexer_component
 {
 
     static std::map<lex::type::T,     const char*> type_enums;

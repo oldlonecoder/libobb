@@ -2,12 +2,12 @@
 // Created by oldlonecoder on 25-02-06.
 //
 
-#include <obb/ui/vchar.h>
+#include <obb/io/vchar.h>
 #include <obb/logbook.h>
 //#include <obb/ui/console.h>
 
 
-namespace obb::ui
+namespace obb::io
 {
 
 #define _eol_ color::pair(color::reset, color::reset)()
@@ -17,46 +17,6 @@ namespace obb::ui
 
 #pragma region vchar-bloc
 // ---------------------------------------------------------------------------------------------------------------------
-
-
-//rem::cc vchar::bloc::render(const ui::rectangle& subrect)
-//{
-//    ui::rectangle rect=subrect;
-//    if (!state)
-//        return state;
-//
-//    if (!rect )
-//        rect = dim;
-//    if (!rect )
-//    {
-//        state = rem::cc::notready;
-//        return state;
-//    }
-//
-//    rect = rect & console::geometry();
-//    if (!rect)
-//    {
-//        state = rem::cc::rejected;
-//        return state;
-//    }
-//
-//    auto local = rect.tolocal() + (rect.a-dim.a);
-//
-//    for (int y = 0; y < *rect.height(); y++)
-//    {
-//        console::cursor({rect.a.x, rect.a.y+y});
-//        std::cout << vchar::render_line(buffer->begin() + (*rect.width<>() * y + local.a.x), *local.width<>());
-//    }
-//    state = rem::cc::accepted;
-//    return state;
-//}
-
-
-// rem::cc vchar::bloc::render(console* con, const ui::rectangle& subrect)
-// {
-//     //...
-//     return console::render(this);
-// }
 
 
 vchar::bloc& vchar::bloc::cursor(ui::cxy _pos)

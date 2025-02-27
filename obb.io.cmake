@@ -1,4 +1,3 @@
-cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 set(FRAME "obb")
 set(WORK   "io")
@@ -11,7 +10,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(TARGET_DIR ${FRAME}/${WORK})
-set(TARGETNAME ${FRAME}.${WORK})
+set(TARGETNAME ${WORK})
+
 message(STATUS "TARGET_DIR: ${TARGET_DIR}")
 
 set(HEADERS
@@ -23,6 +23,7 @@ set(HEADERS
     ${TARGET_DIR}/mouse.h
     ${TARGET_DIR}/ansi_parser.h
     ${TARGET_DIR}/console.h
+    ${TARGET_DIR}/vchar.h
 )
 
 #set(OUT ${FRAME}_${WORK})
@@ -35,7 +36,8 @@ add_library(${TARGETNAME} STATIC
     ${TARGET_DIR}/kbhit.cc
     ${TARGET_DIR}/mouse.cc
     ${TARGET_DIR}/ansi_parser.cc
-    ${TARGET_DIR}/console.h
+    ${TARGET_DIR}/console.cc
+    ${TARGET_DIR}/vchar.cc
 )
 
 
@@ -44,6 +46,9 @@ target_include_directories(${TARGETNAME} PUBLIC
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
                            $<INSTALL_INTERFACE:include/${TARGET_DIR}>
 )
+
+
+set_target_properties(${TARGETNAME} PROPERTIES OUTPUT_NAME "${FRAME}++.${WORK}")
 
 target_compile_definitions(${TARGETNAME} PUBLIC "${TARGETNAME}_DEBUG=$<CONFIG:Debug>")
 include(GenerateExportHeader)
@@ -55,8 +60,8 @@ IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
     )
 ENDIF ()
 
-# static libluss.a should have been put into the current project archive file (libluss.io.a). So no need to link again with luss.a in the other project.
-target_link_libraries(${TARGETNAME} ${CMAKE_DL_LIBS} lus)
+# static .a should have been put into the current project archive file (libluss.io.a). So no need to link again with luss.a in the other project.
+target_link_libraries(${TARGETNAME} ${CMAKE_DL_LIBS} obb++)
 
 
 

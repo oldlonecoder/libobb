@@ -16,7 +16,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
     /// Input size is 1: Either {CTRL/ALT/Command +}CHAR or ESCAPE:
     if(_fd.size() == 1)
     {
-        _kf = true;
+        type = ansi_parser::KEV;
         if(data.kev = kbhit::query(*_fd); data.kev)
             return{rem::cc::accepted, data};
         data.kev = {kbhit::CHARACTER, *_fd, "char"};
@@ -87,7 +87,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_mouse(std::vector
     //mev.move = console::mev().pos != mev.pos;
     //mev.dxy = {mev.pos.x-console::mev().pos.x, mev.pos.y-console::mev().pos.y};
     //book::info() << "mouse data:" << mev.to_string() << book::endl;
-
+    type = MEV;
     return {rem::cc::ready,{mev}};
 }
 

@@ -11,14 +11,14 @@ pragma warning(disable : 4996)
 #   define _CRT_SECURE_NO_WARNINGS
 #   define _SCL_SECURE_NO_WARNINGS
 #   define NOMINMAX
-#   if defined(LUSIOLIB_EXPORTS)
-#       define LUSIOLIB __declspec(dllexport)
+#   if defined(OBBIOLIB_EXPORTS)
+#       define OBBIOLIB __declspec(dllexport)
 #   else
-#       define LUSIOLIB __declspec(dllimport)
+#       define OBBIOLIB __declspec(dllimport)
 #   endif
 
 #else
-#   define LUSIOLIB
+#   define OBBIOLIB
 #endif
 
 // ------------ Mandatory includes ------------

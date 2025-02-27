@@ -38,7 +38,7 @@ namespace obb::ui
  * \note Inpired from the new SFML-3.0 event model : https://www.sfml-dev.org/documentation/3.0.0/
  *       I want to explore the same approche here...
  */
-struct LUSTUILIB event
+struct OBBTUILIB event
 {
 
     std::bitset<64> events{0}; ///< => 2xu32 ?
@@ -47,7 +47,7 @@ struct LUSTUILIB event
     /*!
      * \brief The command class
      */
-    struct LUSTUILIB command
+    struct OBBTUILIB command
     {
         enum code : U64
         {
@@ -69,7 +69,7 @@ struct LUSTUILIB event
     /*!
      * \brief The keypress class
      */
-    struct LUSTUILIB keypress
+    struct OBBTUILIB keypress
     {
         io::kbhit   key{};
     };
@@ -78,7 +78,7 @@ struct LUSTUILIB event
     /*!
      * \brief The file input class
      */
-    struct LUSTUILIB finput
+    struct OBBTUILIB finput
     {
         u8* data{nullptr};
     };
@@ -86,12 +86,12 @@ struct LUSTUILIB event
     /*!
      * \brief The mouse class
      */
-    struct LUSTUILIB mouse
+    struct OBBTUILIB mouse
     {
         io::mouse data{};
     };
 
-    struct LUSTUILIB resize
+    struct OBBTUILIB resize
     {
         ui::size dim{};
     };

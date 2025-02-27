@@ -27,11 +27,11 @@
 namespace obb
 {
 
-class LUSLEXERLIB lexer
+class OBBLEXERLIB lexer
 {
 public:
 
-    struct LUSLEXERLIB config_data
+    struct OBBLEXERLIB config_data
     {
         std::string_view text{};
         token_table*      production{nullptr};

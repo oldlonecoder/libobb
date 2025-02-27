@@ -36,7 +36,7 @@ namespace obb::est
  *
  */
 
-struct LUSESTLIB alu
+struct OBBESTLIB alu
 {
 
     static std::string mNil;

@@ -28,7 +28,7 @@ using namespace obb::integers;
 namespace obb::io
 {
 
-class LUSIOLIB lfd
+class OBBIOLIB lfd
 {
     CLASSNAME(lfd)
     static lfd null_;

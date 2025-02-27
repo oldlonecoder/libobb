@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <obb/ui/vchar.h>
+#include <obb/io/vchar.h>
 #include <obb/notify.h>
 #include <obb/object.h>
 //#include <tuxvision/geometry.h>
@@ -31,10 +31,10 @@
 #define SET_ANY_EVENT_MOUSE 1003
 // --------------------------------------------
 
-namespace obb::ui
+namespace obb::io
 {
 
-class LUSTUILIB console
+class OBBIOLIB console
 {
 
     CLASSNAME(console);
