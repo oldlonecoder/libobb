@@ -42,25 +42,30 @@ class OBBIOLIB ansi_parser
     u8 type {io::ansi_parser::NUL};
 public:
 
-    union input_data
+    struct OBBIOLIB input_data
     {
-        mouse mev;
-        kbhit kev;
-    } data{};
+        u8  tev{ansi_parser::NUL};
+
+        union data
+        {
+            mouse mev;
+            kbhit kev;
+        } data{};
+        template<typename IVT> bool is(){
+            if(std::is_same<mouse, IVT>()){
+                return tev == MEV;
+            }
+            if(std::is_same<kbhit,IVT>()){
+                return tev == KEV;
+            }
+            return false;
+        }
+
+    }data;  ///< I know! .data.data.*
 
     ansi_parser() = default;
     ~ansi_parser() = default;
-
     std::pair<rem::cc, ansi_parser::input_data> parse(lfd& _fd); ///< Returns either key or mouse
-    template<typename IVT> bool is(){
-        if(std::is_same<mouse, IVT>()){
-            return type == MEV;
-        }
-        if(std::is_same<kbhit,IVT>()){
-            return type == KEV;
-        }
-        return false;
-    }
 
 private:
     std::pair<rem::cc, ansi_parser::input_data> parse_kbhit(lfd& _fd);

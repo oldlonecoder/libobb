@@ -255,32 +255,35 @@ std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
 
     io::ansi_parser parser;
     auto [c,dt] = parser.parse(in);
-    if(parser.is<io::mouse>()){
-        dt.mev.button.left = (
-            mev.button.left != dt.mev.button.left ? (
-                dt.mev.button.left ? io::mouse::BUTTON_PRESSED
+    if(dt.is<io::mouse>()){
+        dt.data.mev.button.left = (
+            mev.button.left != dt.data.mev.button.left ? (
+                dt.data.mev.button.left ? io::mouse::BUTTON_PRESSED
                                    : io::mouse::BUTTON_RELEASE
-                ) : dt.mev.button.left
+                ) : dt.data.mev.button.left
         );
-        dt.mev.button.right = (
-            mev.button.right != dt.mev.button.right ? (
-                dt.mev.button.right ? io::mouse::BUTTON_PRESSED
+        dt.data.mev.button.right = (
+            mev.button.right != dt.data.mev.button.right ? (
+                dt.data.mev.button.right ? io::mouse::BUTTON_PRESSED
                                     : io::mouse::BUTTON_RELEASE
-                ) : dt.mev.button.right
+                ) : dt.data.mev.button.right
         );
-        dt.mev.button.mid = (
-            mev.button.mid != dt.mev.button.mid ? (
-                dt.mev.button.mid ? io::mouse::BUTTON_PRESSED
+        dt.data.mev.button.mid = (
+            mev.button.mid != dt.data.mev.button.mid ? (
+                dt.data.mev.button.mid ? io::mouse::BUTTON_PRESSED
                                   : io::mouse::BUTTON_RELEASE
-                ) : dt.mev.button.mid
+                ) : dt.data.mev.button.mid
         );
 
-        dt.mev.dxy = dt.mev.pos - mev.pos;
-        mev = dt.mev;
+        dt.data.mev.dxy = dt.data.mev.pos - mev.pos;
+        mev = dt.data.mev;
         return {rem::cc::ready, dt};
     }
+    if(dt.is<io::kbhit>())
+        if(dt.data.kev.code==io::kbhit::ESCAPE) return {rem::cc::terminate, dt};
 
-    return {rem::cc::unhandled,{}};
+
+    return {rem::cc::unhandled,dt};
 }
 
 

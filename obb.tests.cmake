@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 message("Dir: " ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_executable(obb++.tests.app
-    obb/olbitsnbytes-tests.app/main.cc
+    obb/oldbitsnbytes-tests.app/main.cc
 )
 
 

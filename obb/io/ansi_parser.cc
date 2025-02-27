@@ -16,10 +16,11 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
     /// Input size is 1: Either {CTRL/ALT/Command +}CHAR or ESCAPE:
     if(_fd.size() == 1)
     {
-        type = ansi_parser::KEV;
-        if(data.kev = kbhit::query(*_fd); data.kev)
+        type = data.tev = ansi_parser::KEV;
+        if(data.data.kev = kbhit::query(*_fd); data.data.kev)
             return{rem::cc::accepted, data};
-        data.kev = {kbhit::CHARACTER, *_fd, "char"};
+
+        data.data.kev = {kbhit::CHARACTER, *_fd, "char"};
         return {rem::cc::ready, data};
     }
     /////////////////////////////////////////////////////
@@ -84,11 +85,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_mouse(std::vector
     // Subtract 1 from the coords. Because the terminal starts at 1,1 and our ui system starts 0,0
     mev.pos.x = _args[1]-1;
     mev.pos.y = _args[2]-1;
-    //mev.move = console::mev().pos != mev.pos;
-    //mev.dxy = {mev.pos.x-console::mev().pos.x, mev.pos.y-console::mev().pos.y};
-    //book::info() << "mouse data:" << mev.to_string() << book::endl;
-    type = MEV;
-    return {rem::cc::ready,{mev}};
+    return {rem::cc::ready,{MEV,mev}};
 }
 
 
@@ -146,7 +143,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_csi(lfd &_fd)
             switch(b)
             {
                 case 'M' : case 'm':
-                    type = ansi_parser::MEV;
+                    type = data.tev = ansi_parser::MEV;
                     return parse_mouse(std::move(args));
                 case 'R':
                     book::warning() <<" R :Caret report - ignored" << book::eol;
