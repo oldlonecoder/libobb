@@ -61,7 +61,7 @@ IF (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/compile_commands.json")
 ENDIF ()
 
 # static .a should have been put into the current project archive file (libluss.io.a). So no need to link again with luss.a in the other project.
-target_link_libraries(${TARGETNAME} ${CMAKE_DL_LIBS} obb++)
+target_link_libraries(${TARGETNAME} ${CMAKE_DL_LIBS} "obb++")
 
 
 

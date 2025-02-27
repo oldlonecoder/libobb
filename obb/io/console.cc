@@ -78,7 +78,7 @@ console::console(const std::string& name, u8 _flags_):_flags(_flags_) { _console
 */
 rem::cc console::begin()
 {
-    if(auto c = query_winch(); !c)
+    if(auto c = console::query_winch(); !c)
         book::error() << rem::cc::failed << " to get the screen geometry - there will be no boudaries checks. " << book::endl;
 
 
@@ -103,7 +103,7 @@ rem::cc console::begin()
     ::signal(SIGWINCH, &console::resize_signal);
     if(_console->_flags & console::use_double_buffer)
         switch_alternate();
-    cursor_off();
+    //cursor_off();
     enable_mouse();
 
 
@@ -147,7 +147,7 @@ rem::cc console::enable_mouse()
     //std::cout << MOUSE_REPORT_BUTTONS   << SET;
     std::cout << MOUSE_REPORT_ANY       << SET << std::flush;
     //std::cout << MOUSE_SGR_EXT_MODE     << SET;
-    //std::cout << MOUSE_URXVT_MODE       << SET << std::flush;
+    std::cout << MOUSE_URXVT_MODE       << SET << std::flush;
     _console->_flags |= console::use_mouse;
 
     return rem::cc::accepted;
