@@ -19,15 +19,15 @@
  #pragma once
 
 
- #include <lus/journal.h>
+ #include <obb/logbook.h>
  #include <memory>
  #include <vector>
- #include <lus/geometry.h>
- #include <lus/ui/export.h>
+ #include <obb/geometry.h>
+ #include <obb/ui/export.h>
 
- using namespace lus::integers;
+ using namespace obb::integers;
 
- namespace lus::ui
+ namespace obb::ui
  {
 
  class console;
@@ -170,4 +170,4 @@
 
  };
 
- } // namespace lus::ui
+ } // namespace obb::ui

@@ -11,8 +11,8 @@
  ***************************************************************************/
 
 #pragma once
-#include <lus/expect.h>
-#include <lus/object.h>
+#include <obb/expect.h>
+#include <obb/object.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -25,10 +25,10 @@
 #include <fcntl.h>
 
 
-#include <lus/io/listener.h>
+#include <obb/io/listener.h>
 #include <cerrno>
 
-namespace lus::io
+namespace obb::io
 {
 
 class LUSIOLIB tcp_socket : public object

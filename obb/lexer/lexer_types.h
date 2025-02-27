@@ -22,11 +22,11 @@
 #pragma once
 
 #include <map>
-#include <lus/journal.h>
-#include <lus/lexer/export.h>
+#include <obb/logbook.h>
+#include <obb/lexer/export.h>
 
 
-namespace lus
+namespace obb
 {
 
 using namespace integers;

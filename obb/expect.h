@@ -19,12 +19,12 @@
 
 #pragma once
 
-//#include <lus/rem.h>
+//#include <obb/rem.h>
 #include <any>
 #include <optional>
-#include <lus/journal.h>
+#include <obb/logbook.h>
 
-namespace lus::ui
+namespace obb::ui
 {
 /*!
  * @brief Trying to implement my own very specific expect return value class using std::any and std::optional.
@@ -44,16 +44,16 @@ public:
     expect(expect<T> &other) : _expected_(other._expected_) {}
     expect(expect<T> &&other) noexcept : _expected_(other._expected_) {}
     expect(T va) : _expected_(va){}
-    expect(journal& unexpected)
+    expect(book& unexpected)
     {
         _expected_ = unexpected;
-        _error_ = static_cast<rem::type>(std::any_cast<journal&>(_expected_).entry_type());
+        _error_ = static_cast<rem::type>(std::any_cast<book&>(_expected_).entry_type());
     }
 
     expect<T> &operator=(const expect<T> &other) = default;
     expect<T> &operator=(expect<T> &other) = default;
     expect<T> &operator=(expect<T> &&other) noexcept = default;
-    expect<T> &operator=(journal &unexpected) { _expected_ = unexpected; _error_ = static_cast<rem::type>(unexpected.entry_type()); return *this; }
+    expect<T> &operator=(book &unexpected) { _expected_ = unexpected; _error_ = static_cast<rem::type>(unexpected.entry_type()); return *this; }
 
     ~expect(){ _expected_.reset(); }
 

@@ -3,12 +3,12 @@
 //
 
 
-#include <lus/geometry.h>
-//#include <lus++/journal.h>
+#include <obb/geometry.h>
+//#include <lus++/logbook.h>
 
 
 
-namespace lus::ui
+namespace obb::ui
 {
 
 
@@ -45,7 +45,7 @@ string2d& string2d::operator<<(cxy xy)
 {
     if(!r[xy])
     {
-        //journal::error() << journal::code::oob << r << "; <-" << xy;
+        //book::error() << book::code::oob << r << "; <-" << xy;
         return *this;
     }
     r.goto_xy(xy);
@@ -304,7 +304,7 @@ bool rectangle::operator++()
         if (cursor.y > b.y) {
             cursor.y = b.y;
             //cursor.x = dwh.w-1;
-            //journal::status() << " cursor wraps to home.";
+            //book::status() << " cursor wraps to home.";
             //cursor = a;
             return false;
         }
@@ -373,7 +373,7 @@ bool rectangle::operator--(int)
 bool rectangle::goto_xy(cxy xy)
 {
     if (!in(xy + a)) {
-        //journal::error() << "rejected at" << xy;
+        //book::error() << "rejected at" << xy;
         return false;
     }
     cursor = xy;

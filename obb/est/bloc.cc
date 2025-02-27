@@ -20,12 +20,12 @@
 
 //#pragma once
 
-#include <lus/est/bloc.h>
+#include <obb/est/bloc.h>
 
 
 
 
-namespace lus::est
+namespace obb::est
 {
 
 bloc::bloc(bloc* a_parent_bloc, const std::string a_bloc_id, lex_token* a_token, alu* a_alu):node(a_parent_bloc,a_token,a_alu)
@@ -36,14 +36,14 @@ bloc::bloc(bloc* a_parent_bloc, const std::string a_bloc_id, lex_token* a_token,
 
 bloc::~bloc()
 {
-    // journal::log() << journal::fn::fun;
+    // book::log() << book::fn::fun;
     // for(auto* o : m_children)
     // {
     //     node* n = o->as<node>();
     //     if(n)
     //     {    if(!n->mem.ref && n->mem.acc)
     //         {
-    //             journal::write() << color::reset << " destroy '" << color::yellow << n->attribute() << color::reset << "'.";
+    //             book::write() << color::reset << " destroy '" << color::yellow << n->attribute() << color::reset << "'.";
     //             delete n;
     //         }
     //     }
@@ -77,7 +77,7 @@ const variable::list &bloc::variables()
     return *_variables_;
 }
 
-node *lus::est::bloc::append_instruction(node *_i_)
+node *obb::est::bloc::append_instruction(node *_i_)
 {
     if(!_instructions_)
         _instructions_ = new node::list{};

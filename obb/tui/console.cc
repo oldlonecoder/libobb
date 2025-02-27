@@ -1,20 +1,20 @@
 
-#include <lus/rem.h>
+#include <obb/rem.h>
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 
 
-#include <lus/ui/console.h>
+#include <obb/ui/console.h>
 
 //#include <thread>
 //#include <mutex>
 #include <csignal>
 
-//#include <lus/io/ansi_parser.h>
+//#include <obb/io/ansi_parser.h>
 //
 
-namespace lus::ui
+namespace obb::ui
 {
 
 termios  console::saved_st{}, console::new_term{};
@@ -38,9 +38,9 @@ rem::cc console::query_winch()
         return rem::cc::notexist;
 
     _console->_window = rectangle{{0,0}, ui::size{static_cast<int>(win.ws_col), static_cast<int>(win.ws_row)}};
-    journal::message() << " (new) terminal size: ["
+    book::message() << " (new) terminal size: ["
                        << color::yellow << std::format("{:>3d}x{:<3d}",_console->_window.dwh.w,_console->_window.dwh.h)
-                       << color::reset << "]" << journal::endl;
+                       << color::reset << "]" << book::endl;
 
     return rem::cc::done;
 }
@@ -60,7 +60,7 @@ rectangle console::geometry() { return _console->_window; }
 void console::resize_signal(int )
 {
     if (!_console)
-        throw journal::exception() [journal::error() << "console::resize_signal: no console instance was set." << rem::action::commit];
+        throw book::exception() [book::error() << "console::resize_signal: no console instance was set." << rem::action::commit];
 
     console::query_winch();
     _console->_window_resize_signal(_console->_window);
@@ -79,7 +79,7 @@ console::console(const std::string& name, u8 _flags_):_flags(_flags_) { _console
 rem::cc console::begin()
 {
     if(auto c = query_winch(); !c)
-        journal::error() << rem::cc::failed << " to get the screen geometry - there will be no boudaries checks. " << journal::endl;
+        book::error() << rem::cc::failed << " to get the screen geometry - there will be no boudaries checks. " << book::endl;
 
 
     tcgetattr(STDIN_FILENO, &saved_st);
@@ -98,7 +98,7 @@ rem::cc console::begin()
 
     //switch_alternate();
 
-    journal::write() << " console set to raw mode..." << journal::endl;
+    book::write() << " console set to raw mode..." << book::endl;
 
     ::signal(SIGWINCH, &console::resize_signal);
     if(_console->_flags & console::use_double_buffer)
@@ -246,10 +246,10 @@ std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
 {
     auto [r, in] = _console->_listener.query_lfd(0);
     if(!r)
-        throw  journal::exception() [ journal::except() << " console std input was not initialized prior to call this" << journal::eol];
+        throw  book::exception() [ book::except() << " console std input was not initialized prior to call this" << book::eol];
 
     if(auto r = _console->_listener.poll(0); !r){
-        journal::error() << r << journal::eol;
+        book::error() << r << book::eol;
         return {r,{}};
     }
 
@@ -295,7 +295,7 @@ std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
 rem::action console::parse_stdin(io::lfd& ifd)
 {
     auto z = ifd.size();
-    journal::info() << " stdin : " << z << " bytes waiting..." << journal::endl;
+    book::info() << " stdin : " << z << " bytes waiting..." << book::endl;
     u8 b;
     std::vector<int> seq;
 
@@ -303,14 +303,14 @@ rem::action console::parse_stdin(io::lfd& ifd)
             ifd >> b;
             if ((z==1) && (b==0x1b)){
                 _console->_listener.terminate();
-                journal::info() << "stdin polling terminated: ESC pressed..." << journal::endl;
+                book::info() << "stdin polling terminated: ESC pressed..." << book::endl;
                 ifd.terminate();
                 return rem::action::end;
                 break;
             }
             seq.push_back(b);
-            auto str  = lus::string::bytes(seq);
-            journal::write() << str << journal::endl;
+            auto str  = obb::string::bytes(seq);
+            book::write() << str << book::endl;
             std::cout << str << std::endl;
         }while (!ifd.empty());
 

@@ -17,10 +17,10 @@
 
 
 
-#include <lus/io/kbhit.h>
+#include <obb/io/kbhit.h>
 
 
-namespace lus::io
+namespace obb::io
 {
 
 kbhit kbhit::NONE{kbhit::NO_KEY, 0, "NO KEY"};
@@ -151,4 +151,4 @@ kbhit kbhit::query(std::string_view s)
 }
 
 
-} // namespace lus::io
+} // namespace obb::io

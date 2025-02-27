@@ -1,9 +1,9 @@
 #pragma once
 
-#include <lus/ui/event.h> // NOLINT(misc-header-include-cycle)
+#include <obb/ui/event.h> // NOLINT(misc-header-include-cycle)
 
 
-namespace lus::ui
+namespace obb::ui
 {
 ////////////////////////////////////////////////////////////
 template <typename EVT> event::event(const EVT& evt)
@@ -38,4 +38,4 @@ template <typename T> decltype(auto) event::visit(T&& visitor) const
     return std::visit(std::forward<T>(visitor), data);
 }
 
-} // namespace lus::ui
+} // namespace obb::ui

@@ -1,14 +1,14 @@
 
 
 
-#include <lus/est/grammar.h>
-#include <lus/lexer/tokens_table.h>
+#include <obb/est/grammar.h>
+#include <obb/lexer/tokens_table.h>
 
-#include <lus/journal.h>
-//#include <lus/ui/tuxns.h>
+#include <obb/logbook.h>
+//#include <obb/ui/tuxns.h>
 
 
-namespace lus::est
+namespace obb::est
 {
 
 
@@ -80,7 +80,7 @@ static std::map<char, ui::color::pair> punctuation_colors
 std::string grammar::props::to_string() const
 {
 
-    lus::string _str{};
+    obb::string _str{};
 
     if(z) _str << properties_colors[OPTIONAL ];
     if(r) _str << properties_colors[REPEAT   ];
@@ -94,7 +94,7 @@ std::string grammar::props::to_string() const
 
 std::string grammar::term::to_string(lexer::config_data& _data) const
 {
-    lus::string str;
+    obb::string str;
     str << _props_.to_string() << term_colors[_type_];
     lex_token tok{};
     switch(_type_)
@@ -141,7 +141,7 @@ rem::cc grammar::build(const std::string& _name)
     _config_data_.text = _config_data_.text.empty() ? grammar_text: _config_data_.text;
     if (!_config_data_.production)
     {
-        journal::fatal() << "grammar::build: no token_table provided!" << journal::endl;
+        book::fatal() << "grammar::build: no token_table provided!" << book::endl;
         return rem::cc::failed;
     }
 
@@ -149,11 +149,11 @@ rem::cc grammar::build(const std::string& _name)
     _lexer.config() = _config_data_;
     if (auto r = _lexer.exec(); !r )
     {
-        journal::fatal() << " lexer: " << r << journal::endl;
+        book::fatal() << " lexer: " << r << book::endl;
         return r;
     }
 
-    journal::status() << rem::cc::success <<  " - tokens count:" << ui::color::lime << _config_data_.production->count() << journal::endl;
+    book::status() << rem::cc::success <<  " - tokens count:" << ui::color::lime << _config_data_.production->count() << book::endl;
 
     ///... to be continued
     return rem::cc::notimplemented;

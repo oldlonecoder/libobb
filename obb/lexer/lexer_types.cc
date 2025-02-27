@@ -2,10 +2,10 @@
 // Created by oldlonecoder on 8/22/24.
 //
 
-#include <lus/lexer/lexer_types.h>
-#include <lus/string.h>
+#include <obb/lexer/lexer_types.h>
+#include <obb/string.h>
 
-namespace lus
+namespace obb
 {
 
 
@@ -209,8 +209,8 @@ std::string lexer_component::type_name(lex::type::T lexem_type)
 
 lex::type::T lexer_component::type_enum(const std::string &named_type)
 {
-    lus::string str = named_type;
-    lus::string::word::list list;
+    obb::string str = named_type;
+    obb::string::word::list list;
     lex::type::T tmap = 0;
 
     auto count = str.words(list, false,":");

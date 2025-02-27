@@ -21,14 +21,14 @@
 #include <map>
 #include <vector>
 #include <bitset>
-#include <lus/journal.h>
-#include <lus/io/kbhit.h>
-#include <lus/io/mouse.h>
-#include <lus/ui/export.h>
+#include <obb/logbook.h>
+#include <obb/io/kbhit.h>
+#include <obb/io/mouse.h>
+#include <obb/ui/export.h>
 #include <queue>
 #include <variant>
 
-namespace lus::ui
+namespace obb::ui
 {
 
 
@@ -155,15 +155,15 @@ private:
 
 }
 
-#include <lus/ui/event.inline>
+#include <obb/ui/event.inline>
 
 ////////////////////////////////////////////////////////////
-/// \class lus::ui::event
+/// \class obb::ui::event
 /// \ingroup events
 ///
-/// `lus::ui::event` holds all the information about a system event
+/// `obb::ui::event` holds all the information about a system event
 /// that just happened. Events are retrieved using the
-/// `lus::io::listener::loop->signal` from `lus::ui::application::poll_event()` functions.
+/// `obb::io::listener::loop->signal` from `obb::ui::application::poll_event()` functions.
 ///
 /// A `ui::event` instance contains the event_type of the event
 /// (mouse moved, key pressed, window closed, ...) as well
@@ -194,7 +194,7 @@ private:
 ///     // ui::console::resize signal:
 ///     if (const auto* resized = event->get<ui::event::console_resize>())
 ///     {
-///         journal::status() << "Console resize: " << color::yellow << resized->dim.to_string() << color::z << journal::endl;
+///         book::status() << "Console resize: " << color::yellow << resized->dim.to_string() << color::z << book::endl;
 ///         //...
 ///     }
 ///

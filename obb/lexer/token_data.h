@@ -18,10 +18,10 @@
 #pragma once
 
 
-#include <lus/lexer/lexer_types.h>
-#include <lus/lexer/sscan.h>
+#include <obb/lexer/lexer_types.h>
+#include <obb/lexer/sscan.h>
 
-namespace lus
+namespace obb
 {
 
 
@@ -41,8 +41,8 @@ struct LUSLEXERLIB lex_token
 
     ~lex_token() = default;
 
-    // From lus::StrScanner :
-    lus::sscan::numeric::details num_data{};
+    // From obb::StrScanner :
+    obb::sscan::numeric::details num_data{};
     void                         numeric_tr();
     // ------------------------------------------------
 
@@ -56,7 +56,7 @@ struct LUSLEXERLIB lex_token
         const char*                                end{};
         std::string_view                           operator()();
         [[maybe_unused]] [[nodiscard]] std::string position() const;
-        lex_token::location_data&                  operator =(lus::sscan::location_data const&ldata);
+        lex_token::location_data&                  operator =(obb::sscan::location_data const&ldata);
     } token_location;
 
 

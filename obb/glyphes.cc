@@ -1,10 +1,10 @@
 
-#include <lus/glyphes.h>
+#include <obb/glyphes.h>
 #include <map>
 
-using lus::ui::color;
+using obb::ui::color;
 
-namespace lus
+namespace obb
 {
 
 std::vector<accent_fr::T> accent_fr::data =
@@ -246,7 +246,7 @@ glyph::data_array glyph::data =
     c_stop                   ,
     c_debian                 ,
     c_terminal               ,
-    c_journal                    ,
+    c_book                    ,
     c_sqpixel                ,
     c_fbox                   ,
     c_dnpixel                ,
@@ -360,7 +360,7 @@ std::map<glyph::type, std::string> glyph_dict =
     {glyph::stop               ,"stop"},
     {glyph::debian             ,"debian"},
     {glyph::terminal           ,"terminal"},
-    {glyph::journal                ,"journal"},
+    {glyph::book                ,"book"},
     {glyph::sqpixel            ,"sqpixel"},
     {glyph::fbox               ,"fbox"},
     {glyph::dnpixel            ,"dnpixel"},
@@ -380,7 +380,7 @@ glyph::type glyph::scan(const std::string& ghname)
     return 0;
 }
 
-std::pair<bool, glyph::type> lus::glyph::scan_name(const std::string& glyph_name)
+std::pair<bool, glyph::type> obb::glyph::scan_name(const std::string& glyph_name)
 {
     for (auto& [N,Str] : glyph_dict)
     {
@@ -391,9 +391,9 @@ std::pair<bool, glyph::type> lus::glyph::scan_name(const std::string& glyph_name
 
 
 
-std::string lus::glyph::name(lus::glyph::type gh)
+std::string obb::glyph::name(obb::glyph::type gh)
 {
-    return lus::glyph_dict[gh];
+    return obb::glyph_dict[gh];
 }
 
 

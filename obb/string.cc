@@ -20,12 +20,12 @@
 //#pragma once
 
 
-#include <lus/string.h>
+#include <obb/string.h>
 
 #define out std::cout
 #define lend std::endl;
 
-namespace lus
+namespace obb
 {
 
 
@@ -95,7 +95,7 @@ string& string::operator << (color::pair colors)
 
 string& string::operator << (glyph::type ig)
 {
-    if(ig > glyph::journal) return *this;
+    if(ig > glyph::book) return *this;
     _d_ += glyph::data[ig];
     return *this;
 }
@@ -162,7 +162,7 @@ size_t string::words(string::word::list& a_list, bool a_keep_as_word, const char
             }
             if(!eat(w))
             {
-                // out << "in separator journalic: eat reached end of string. - break;" << std::endl;
+                // out << "in separator bookic: eat reached end of string. - break;" << std::endl;
                 break;
             }
             w.sync(_d_);
@@ -250,7 +250,7 @@ bool string::eat(string::word& w)
 }
 
 
-std::string string::make_str(const lus::string::list& _list)
+std::string string::make_str(const obb::string::list& _list)
 {
     std::string str="{";
     int col=0;
@@ -326,7 +326,7 @@ std::vector<std::string_view> string::string_view_list(int Count, char** s, int 
 }
 
 
-lus::string::list string::make_list(int argc, char** argv, int offset)
+obb::string::list string::make_list(int argc, char** argv, int offset)
 {
     std::vector<std::string> result;
     for(int i = offset; i < argc; ++i) result.emplace_back(argv[i]);

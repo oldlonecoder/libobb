@@ -14,13 +14,13 @@
 
 #pragma once
 
-#include <lus/ui/vchar.h>
-#include <lus/notify.h>
-#include <lus/object.h>
+#include <obb/ui/vchar.h>
+#include <obb/notify.h>
+#include <obb/object.h>
 //#include <tuxvision/geometry.h>
-#include <lus/io/listener.h>
-#include <lus/io/kbhit.h>
-#include <lus/io/ansi_parser.h>
+#include <obb/io/listener.h>
+#include <obb/io/kbhit.h>
+#include <obb/io/ansi_parser.h>
 #include <termios.h>
 
 // https://www.xfree86.org/current/ctlseqs.html
@@ -31,7 +31,7 @@
 #define SET_ANY_EVENT_MOUSE 1003
 // --------------------------------------------
 
-namespace lus::ui
+namespace obb::ui
 {
 
 class LUSTUILIB console

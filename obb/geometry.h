@@ -19,9 +19,9 @@
 
 
 #pragma once
-#include <lus/string.h>
+#include <obb/string.h>
 
-namespace lus::ui
+namespace obb::ui
 {
 
 namespace justify
@@ -41,7 +41,7 @@ static constexpr u16 auto_size_text   = 0x0100; ///< Justify auto-stretch
 
 
 /**
- * @brief lus::ui::rectangle enums values
+ * @brief obb::ui::rectangle enums values
  * @author &copy; 2008,2022,2023, Serge Lussier, lussier.serge@gmail.com ( oldlonecoder )
  */
 namespace direction
@@ -53,7 +53,7 @@ static constexpr I8 up = 2;    ///< up
 static constexpr I8 down = -2; ///< down
 }
 
-struct LUSLIB cxy {
+struct OBBLIB cxy {
 
     int x = -1;
     int y = -1;
@@ -95,7 +95,7 @@ struct LUSLIB cxy {
 };
 
 
-struct LUSLIB size {
+struct OBBLIB size {
     int w{0};
     int h{0};
      
@@ -137,7 +137,7 @@ struct LUSLIB size {
         else if constexpr (std::is_same_v<T, u32>)          return static_cast<u32>(w           );
         else if constexpr (std::is_same_v<T, i64>)          return static_cast<u64>(w           );
         else if constexpr (std::is_same_v<T, std::string>)  return std::to_string(w             );
-        //journal::error() << journal::cc::expected << " compatible left-value type";
+        //book::error() << book::cc::expected << " compatible left-value type";
         return {};
     }
     template<typename T=int> std::optional<T> height() const
@@ -160,7 +160,7 @@ struct LUSLIB size {
         else if constexpr (std::is_same_v<T, u32>)          return static_cast<u32>(h);
         else if constexpr (std::is_same_v<T, i64>)          return static_cast<u64>(h);
         else if constexpr (std::is_same_v<T, std::string>)  return std::to_string(h);
-        //journal::error() << journal::cc::expected << " compatible left-value type";
+        //book::error() << book::cc::expected << " compatible left-value type";
         return {};
     }
 };
@@ -176,7 +176,7 @@ struct LUSLIB size {
  * @author oldlonecoder (lussier.luxe@gmail.com)
  *
  */
-struct LUSLIB rectangle {
+struct OBBLIB rectangle {
 
     cxy a{0, 0};
     cxy b{0, 0};
@@ -240,7 +240,7 @@ struct LUSLIB rectangle {
         else if constexpr (std::is_same_v<T, u32>)          return static_cast<u32>(dwh.w           );
         else if constexpr (std::is_same_v<T, i64>)          return static_cast<u64>(dwh.w           );
         else if constexpr (std::is_same_v<T, std::string>)  return std::to_string(dwh.w             );
-        //journal::error() << journal::cc::expected << " compatible left-value type";
+        //book::error() << book::cc::expected << " compatible left-value type";
         return {};
     }
     template<typename T=int> std::optional<T> height() const
@@ -263,7 +263,7 @@ struct LUSLIB rectangle {
         else if constexpr (std::is_same_v<T, u32>)          return static_cast<u32>(dwh.h);
         else if constexpr (std::is_same_v<T, i64>)          return static_cast<u64>(dwh.h);
         else if constexpr (std::is_same_v<T, std::string>)  return std::to_string(dwh.h);
-        //journal::error() << journal::cc::expected << " compatible left-value type";
+        //book::error() << book::cc::expected << " compatible left-value type";
         return {};
     }
 
@@ -303,9 +303,9 @@ struct LUSLIB rectangle {
 };
 
 
-struct LUSLIB string2d
+struct OBBLIB string2d
 {
-    lus::string win{};
+    obb::string win{};
     rectangle r;
 
     string2d& gotoxy(int x, int y);
@@ -320,7 +320,7 @@ struct LUSLIB string2d
     // --------------------------
     template<typename t> string2d& operator<< (t v)
     {
-        lus::string str;
+        obb::string str;
         str << v;
         return put(str());
     }

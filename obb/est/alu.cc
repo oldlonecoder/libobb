@@ -12,16 +12,16 @@
  ******************************************************************************************/
 
 
-#include <lus/est/alu.h>
+#include <obb/est/alu.h>
 
-using namespace lus::integers;
+using namespace obb::integers;
 
-namespace lus::est
+namespace obb::est
 {
 
 std::string  alu::mNil;
 #define debug_out ;
-//journal::debug() << rem::fn::fun << "rhs=" << rhs << ", this = " << v.d << " : types: " << lexer_component::type_name(T);
+//book::debug() << rem::fn::fun << "rhs=" << rhs << ", this = " << v.d << " : types: " << lexer_component::type_name(T);
 
 
 alu::alu(int8_t rhs) : T(lex::type::I8|lex::type::Number|lex::type::Leaf)
@@ -154,7 +154,7 @@ alu alu::operator+(const alu& rhs) const
     else lr_number(rhs)
         return {v.d + rhs.v.d}; // Slow?
 
-    throw journal::exception()[ journal::except() <<" [" << lexer_component::type_name(T) << "] and [" << lexer_component::type_name(rhs.T) << "] are incompatible."] ;
+    throw book::exception()[ book::except() <<" [" << lexer_component::type_name(T) << "] and [" << lexer_component::type_name(rhs.T) << "] are incompatible."] ;
     return {false};
 }
 
@@ -171,7 +171,7 @@ alu alu::operator==(const alu & lf) const
     {
         return lf.number<double>() == number<double>();
     }
-    throw journal::exception()[ journal::except() <<" Equality comparison between different types(" << lexer_component::type_name(T) << " == " << lexer_component::type_name(lf.T) << ')'] ;
+    throw book::exception()[ book::except() <<" Equality comparison between different types(" << lexer_component::type_name(T) << " == " << lexer_component::type_name(lf.T) << ')'] ;
     return {false};
 }
 
@@ -201,10 +201,10 @@ alu alu::operator[](alu::CNV c)
 
 alu alu::operator-(const alu& rhs)
 {
-    //journal::debug() << rem::fn::fun << " rhs=" << rhs.to_str();
+    //book::debug() << rem::fn::fun << " rhs=" << rhs.to_str();
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<" substraction operator strings is not yet supported"] ;
+        throw book::exception()[ book::except() <<" substraction operator strings is not yet supported"] ;
         //return remove_substr_copy(rhs.text);
         return *this;
     }
@@ -214,7 +214,7 @@ alu alu::operator-(const alu& rhs)
     lr_any(rhs)
         return {reinterpret_cast<uint64_t>(value<void *>()) - reinterpret_cast<uint64_t>(rhs.value<void *>())};
 
-    throw journal::exception()[ journal::except() <<"cannot apply sign on " << lexer_component::type_name(T)] ;
+    throw book::exception()[ book::except() <<"cannot apply sign on " << lexer_component::type_name(T)] ;
     return {false};
 }
 
@@ -232,7 +232,7 @@ alu alu::operator*(const alu& rhs) const
     lr_number(rhs)
         return {v.d * rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot multiply" << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot multiply" << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return {};
 }
 
@@ -240,7 +240,7 @@ alu alu::operator/(const alu& rhs)
 {
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot divide strings"] ;
+        throw book::exception()[ book::except() <<"cannot divide strings"] ;
         return {};
     }
     //    f = text + rhs.text;
@@ -252,13 +252,13 @@ alu alu::operator/(const alu& rhs)
 
         if (vr == 0.0L)
         {
-            throw journal::exception()[ journal::except() << rem::type::err  << " alu operation: " << rem::cc::divbyzero << " =>(" << (*this)() << " / " << rhs() << ")" ];
+            throw book::exception()[ book::except() << rem::type::err  << " alu operation: " << rem::cc::divbyzero << " =>(" << (*this)() << " / " << rhs() << ")" ];
             return "Inf";
         }
         return {lr / vr};
     }
 
-    throw journal::exception()[ journal::except() <<"cannot divide " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot divide " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return {};
 }
 
@@ -267,13 +267,13 @@ alu alu::operator%(const alu& rhs) const
     alu f;
     lrtext(rhs)
     {
-        throw  journal::exception()[ journal::except() <<"cannot modulo strings"];
+        throw  book::exception()[ book::except() <<"cannot modulo strings"];
         return {};
     }
     lr_number(rhs)
         return {static_cast<U64>(v.d) % static_cast<U64>(rhs.v.d)};
 
-    throw journal::exception()[ journal::except() <<"cannot modulo " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."] ;
+    throw book::exception()[ book::except() <<"cannot modulo " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."] ;
     return {};
 }
 
@@ -282,14 +282,14 @@ alu alu::operator^(const alu& rhs) const
     alu f;
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot xor strings"];
+        throw book::exception()[ book::except() <<"cannot xor strings"];
         return {};
     }
 
     lr_number(rhs)
         return {static_cast<U64>(v.d) ^ static_cast<U64>(rhs.v.d)};
 
-    throw journal::exception()[ journal::except() <<"cannot xor " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot xor " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return {};
 }
 
@@ -298,7 +298,7 @@ alu alu::operator<<(const alu& rhs) const
     alu f;
     lrtext(rhs)
     {
-        lus::string str = text;
+        obb::string str = text;
         str << rhs.text;
         return {str()};
     }
@@ -306,7 +306,7 @@ alu alu::operator<<(const alu& rhs) const
     lr_number(rhs)
         return {static_cast<U64>(v.d)<< static_cast<U64>(rhs.v.d)};
 
-    throw journal::exception()[ journal::except() <<"cannot execute bitwise left-shift or insert with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot execute bitwise left-shift or insert with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return f;
 }
 alu alu::operator>>(const alu& rhs) const
@@ -314,13 +314,13 @@ alu alu::operator>>(const alu& rhs) const
     alu f;
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute bitwise right-shift or extract/write/send string on string " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+        throw book::exception()[ book::except() <<"cannot execute bitwise right-shift or extract/write/send string on string " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     }
     lr_number(rhs)
         return {static_cast<U64>(v.d) >> static_cast<U64>(rhs.v.d)};
 
 
-    throw journal::exception()[ journal::except() <<"cannot execute bitwise right-shift or extract/write/send with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."] ;
+    throw book::exception()[ book::except() <<"cannot execute bitwise right-shift or extract/write/send with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."] ;
     return f;
 }
 
@@ -334,7 +334,7 @@ alu alu::operator|(const alu& rhs) const
     lr_number(rhs)
         return {static_cast<U64>(v.d) | static_cast<U64>(rhs.v.d)};
 
-    throw journal::exception()[ journal::except() <<"cannot execute bitwise or with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot execute bitwise or with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return {};
 }
 
@@ -342,12 +342,12 @@ alu alu::operator&(const alu& rhs) const
 {
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute bitwise and on string "];
+        throw book::exception()[ book::except() <<"cannot execute bitwise and on string "];
     }
     lr_number(rhs)
         return {static_cast<U64>(v.d) & static_cast<U64>(rhs.v.d)};
 
-    throw journal::exception()[ journal::except() <<"cannot execute bitwise and between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot execute bitwise and between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return {};
 }
 
@@ -355,7 +355,7 @@ alu alu::operator~()
 {
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute bitwise invert on string " ];
+        throw book::exception()[ book::except() <<"cannot execute bitwise invert on string " ];
     }
 
     is_number
@@ -365,7 +365,7 @@ alu alu::operator~()
         return {~static_cast<U64>(v.d)};
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute bitwise invert on " << lexer_component::type_name(T) ];
+    throw book::exception()[ book::except() <<"cannot execute bitwise invert on " << lexer_component::type_name(T) ];
     return {};
 }
 
@@ -384,7 +384,7 @@ alu& alu::operator+=(const alu& rhs)
         return *this;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute assign add between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T)];
+    throw book::exception()[ book::except() <<"cannot execute assign add between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T)];
     return *this;
 }
 
@@ -399,7 +399,7 @@ alu& alu::operator-=(const alu& rhs)
         return *this;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute assign substraction between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
+    throw book::exception()[ book::except() <<"cannot execute assign substraction between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "." ];
     return *this;
 }
 
@@ -407,13 +407,13 @@ alu& alu::operator*=(const alu& rhs)
 {
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign multiply on strings [" << (*this)() << " *= " << rhs() << "]." ];
+        throw book::exception()[ book::except() <<"cannot execute assign multiply on strings [" << (*this)() << " *= " << rhs() << "]." ];
         return *this;
     }
 
     lr_number(rhs)
     {
-        journal::debug()
+        book::debug()
             << color::orange5 << "alu"
             << color::white << "::"
             << color::white << rem::fn::endl << ":" << rem::fn::endl << "{" << rem::fn::endl
@@ -422,11 +422,11 @@ alu& alu::operator*=(const alu& rhs)
             << color::yellow << rhs.v.d << color::white << '(' << color::lightseagreen << lexer_component::type_name(rhs.T) << color::white << ')' ;
 
         v.d *= rhs.v.d;
-        journal::write() << color::white << " = " << color::yellow << v.d  << color::white <<  rem::fn::endl << '}' <<  rem::fn::endl ;
+        book::write() << color::white << " = " << color::yellow << v.d  << color::white <<  rem::fn::endl << '}' <<  rem::fn::endl ;
         return *this;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute assign multiply between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."] ;
+    throw book::exception()[ book::except() <<"cannot execute assign multiply between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."] ;
     return *this;
 }
 
@@ -434,7 +434,7 @@ alu& alu::operator/=(const alu& rhs)
 {
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign divide on strings [" << (*this)() << " /= " << rhs() << "]."] ;
+        throw book::exception()[ book::except() <<"cannot execute assign divide on strings [" << (*this)() << " /= " << rhs() << "]."] ;
         return *this;
     }
 
@@ -443,7 +443,7 @@ alu& alu::operator/=(const alu& rhs)
 
         if (v.d==0.0f)
         {
-            throw journal::exception()[ journal::except() <<"alu: cannot divide by zero."]; // Oops plutôt erreur fatale!!
+            throw book::exception()[ book::except() <<"alu: cannot divide by zero."]; // Oops plutôt erreur fatale!!
             v.d = 0.0;
             T = lex::type::Null;
             return *this;
@@ -451,7 +451,7 @@ alu& alu::operator/=(const alu& rhs)
         v.d /= rhs.v.d;
         return *this;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute assign divide between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute assign divide between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return *this;
 }
 
@@ -468,7 +468,7 @@ alu& alu::operator%=(const alu& rhs)
         v.d = u %= static_cast<U64>(rhs.v.d);
         T &= ~lex::type::Float;
     }
-    throw journal::exception()[ journal::except() << "cannot execute modulo operator on  [" << (*this)() << " %= " << rhs() << "]."];
+    throw book::exception()[ book::except() << "cannot execute modulo operator on  [" << (*this)() << " %= " << rhs() << "]."];
     return *this;
 }
 
@@ -477,7 +477,7 @@ alu& alu::operator|=(const alu& rhs)
 
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign bitwise or on strings [" << (*this)() << " |= " << rhs() << "]."];
+        throw book::exception()[ book::except() <<"cannot execute assign bitwise or on strings [" << (*this)() << " |= " << rhs() << "]."];
         return *this;
     }
 
@@ -486,7 +486,7 @@ alu& alu::operator|=(const alu& rhs)
         v.d = static_cast<U64>(v.d) | static_cast<U64>(rhs.v.d);
         return *this;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute assign bitwise or between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute assign bitwise or between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return *this;
 }
 
@@ -494,7 +494,7 @@ alu& alu::operator&=(const alu& rhs)
 {
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign bitwise and on strings [" << (*this)() << " &= " << rhs() << "]."];
+        throw book::exception()[ book::except() <<"cannot execute assign bitwise and on strings [" << (*this)() << " &= " << rhs() << "]."];
         return *this;
     }
     //    a = std::string(text + rhs.text);
@@ -505,7 +505,7 @@ alu& alu::operator&=(const alu& rhs)
         T &= ~lex::type::Float;
         return *this;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute assign bitwise and between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute assign bitwise and between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return *this;
 }
 
@@ -513,7 +513,7 @@ alu& alu::operator^=(const alu& rhs)
 {
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign xor on strings [" << (*this)() << " ><= " << rhs() << "]."];
+        throw book::exception()[ book::except() <<"cannot execute assign xor on strings [" << (*this)() << " ><= " << rhs() << "]."];
         return *this;
     }
 
@@ -525,7 +525,7 @@ alu& alu::operator^=(const alu& rhs)
         return *this;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute assign xor between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute assign xor between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return *this;
 }
 
@@ -538,7 +538,7 @@ alu alu::operator>(const alu& rhs)
     lr_number(rhs)
         return {v.d > rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return {false};
 }
 
@@ -550,7 +550,7 @@ alu alu::operator<(const alu& rhs)
     lr_number(rhs)
         return {v.d < rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return {false};
 
 }
@@ -563,7 +563,7 @@ alu alu::operator>=(const alu& rhs)
     lr_number(rhs)
         return {v.d >= rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return {false};
 
 }
@@ -576,7 +576,7 @@ alu alu::operator<=(const alu& rhs)
     lr_number(rhs)
         return {v.d <= rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return {false};
 
 }
@@ -589,7 +589,7 @@ alu alu::operator!=(const alu& rhs)
     lr_number(rhs)
         return {v.d != rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return {false};
 }
 
@@ -601,7 +601,7 @@ alu alu::operator||(const alu& rhs)
     lr_number(rhs)
         return {v.d || rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T)];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T)];
     return {false};
 }
 
@@ -613,7 +613,7 @@ alu alu::operator&&(const alu& rhs)
     lr_number(rhs)
         return {v.d && rhs.v.d};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute relational operations between " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return {false};
 }
 
@@ -626,9 +626,9 @@ alu alu::operator-()
 {
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute sign operator on string -(\"" << (*this)() << "\")."];
+        throw book::exception()[ book::except() <<"cannot execute sign operator on string -(\"" << (*this)() << "\")."];
     }
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute relational operations on " << lexer_component::type_name(T)];
     return -v.d;
 }
 
@@ -636,14 +636,14 @@ alu alu::operator+()
 {
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute sign operator on string +(\"" << (*this)() << "\")."];
+        throw book::exception()[ book::except() <<"cannot execute sign operator on string +(\"" << (*this)() << "\")."];
     }
 
     is_number
         if (v.d < 0.0f)
             return {v.d * -1};
 
-    throw journal::exception()[ journal::except() <<"cannot execute relational operations on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute relational operations on " << lexer_component::type_name(T)];
     return {false};
 }
 
@@ -652,7 +652,7 @@ alu alu::operator++(int)
 
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot increment string (\"" << (*this)() << "\")++."];
+        throw book::exception()[ book::except() <<"cannot increment string (\"" << (*this)() << "\")++."];
     }
 
     is_number
@@ -663,7 +663,7 @@ alu alu::operator++(int)
         v.d = f;
         return ff;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute increment operations on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute increment operations on " << lexer_component::type_name(T)];
     return {false};
 }
 
@@ -671,7 +671,7 @@ alu alu::operator++()
 {
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot increment string ++(\"" << (*this)() << "\")."];
+        throw book::exception()[ book::except() <<"cannot increment string ++(\"" << (*this)() << "\")."];
     }
 
     is_number
@@ -681,7 +681,7 @@ alu alu::operator++()
         v.d = f;
         return *this;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute increment operations on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute increment operations on " << lexer_component::type_name(T)];
     return {false};
 }
 
@@ -690,7 +690,7 @@ alu alu::operator--()
 
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot decrement string --(\"" << (*this)() << "\")."];
+        throw book::exception()[ book::except() <<"cannot decrement string --(\"" << (*this)() << "\")."];
     }
 
     is_number
@@ -700,7 +700,7 @@ alu alu::operator--()
         v.d = f;
         return *this;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute decrement operations on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute decrement operations on " << lexer_component::type_name(T)];
     return {false};
 }
 
@@ -708,7 +708,7 @@ alu alu::operator--(int)
 {
     istext(*this)
     {
-        throw journal::exception()[ journal::except() <<"cannot decrement string (\"" << (*this)() << "\")++."]; // oops... What if long text string?
+        throw book::exception()[ book::except() <<"cannot decrement string (\"" << (*this)() << "\")++."]; // oops... What if long text string?
     }
 
     is_number
@@ -719,7 +719,7 @@ alu alu::operator--(int)
         v.d = f;
         return ff;
     }
-    throw journal::exception()[ journal::except() <<"cannot execute decrement operations on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute decrement operations on " << lexer_component::type_name(T)];
     return {false};
 }
 
@@ -732,13 +732,13 @@ alu alu::radical(const alu& rhs) const
         return al;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute radical operator on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute radical operator on " << lexer_component::type_name(T)];
     return {false};
 }
 
 //    alu alu::factorial(const alu& Lhs_) const
 //    {
-//        journal::debug() << color::Yellow << (*this)() << color::Reset << ":" ;
+//        book::debug() << color::Yellow << (*this)() << color::Reset << ":" ;
 //        lr_number(Lhs_)
 //        {
 //            int fac = 1;
@@ -747,36 +747,36 @@ alu alu::radical(const alu& rhs) const
 //                return {};
 //            for (int j = 1; j <= N; j++)
 //                fac *= j;
-//            journal::debug() << color::Yellow << (*this)() << color::Reset << ":" ;
+//            book::debug() << color::Yellow << (*this)() << color::Reset << ":" ;
 //            return {fac};
 //        }
-//        throw journal::exception()[ journal::except() <<"cannot execute factorial operator on " << lexer_component::type_name(T) ;
+//        throw book::exception()[ book::except() <<"cannot execute factorial operator on " << lexer_component::type_name(T) ;
 //        return {false};
 //    }
 
 alu alu::factorial() const
 {
-    journal::debug() << rem::fn::func << color::yellow << (*this)() <<color::white << ":"  ;
+    book::debug() << rem::fn::func << color::yellow << (*this)() <<color::white << ":"  ;
     lr_number(*this)
     {
         if(v.d < 0)
         {
-            throw journal::exception()[ journal::except() <<" Invalid Base number :" << color::yellow << (*this)() << color::reset] ;
+            throw book::exception()[ book::except() <<" Invalid Base number :" << color::yellow << (*this)() << color::reset] ;
             return {};
         }
         int fac = 1;
         int N = number<int>();
         if (N >= 10)
         {
-            throw journal::exception()[ journal::except() <<" Base number too high." << color::yellow << (*this)() << color::reset];
+            throw book::exception()[ book::except() <<" Base number too high." << color::yellow << (*this)() << color::reset];
             return {};
         }
         for (int j = 1; j <= N; j++)
             fac *= j;
-        journal::debug() << rem::fn::func << color::yellow << fac <<color::white << ":"  ;
+        book::debug() << rem::fn::func << color::yellow << fac <<color::white << ":"  ;
         return { fac };
     }
-    throw journal::exception()[ journal::except() <<"cannot execute factorial operator on " << lexer_component::type_name(T)];
+    throw book::exception()[ book::except() <<"cannot execute factorial operator on " << lexer_component::type_name(T)];
     return { false };
 
 }
@@ -786,7 +786,7 @@ alu& alu::operator<<=(const alu& rhs)
 
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign extraction/bitwise left-shift / output on strings."];
+        throw book::exception()[ book::except() <<"cannot execute assign extraction/bitwise left-shift / output on strings."];
         return *this;
     }
 
@@ -796,7 +796,7 @@ alu& alu::operator<<=(const alu& rhs)
         return *this;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute assign bitwise left-shift or insert with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute assign bitwise left-shift or insert with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return *this;
 }
 
@@ -805,7 +805,7 @@ alu& alu::operator>>=(const alu& rhs)
 
     lrtext(rhs)
     {
-        throw journal::exception()[ journal::except() <<"cannot execute assign extraction/bitwise right-shift / output on strings." ];
+        throw book::exception()[ book::except() <<"cannot execute assign extraction/bitwise right-shift / output on strings." ];
         return *this;
     }
 
@@ -815,7 +815,7 @@ alu& alu::operator>>=(const alu& rhs)
         return *this;
     }
 
-    throw journal::exception()[ journal::except() <<"cannot execute assign bitwise left-shift or insert with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
+    throw book::exception()[ book::except() <<"cannot execute assign bitwise left-shift or insert with " << lexer_component::type_name(T) << " and " << lexer_component::type_name(rhs.T) << "."];
     return *this;
 }
 
@@ -824,7 +824,7 @@ alu& alu::operator>>=(const alu& rhs)
 
 [[maybe_unused]] std::string alu::to_str() const
 {
-    lus::string str;
+    obb::string str;
     if (T & lex::type::Bool)
     {
         str << (v.d ? "true" : "false");

@@ -11,14 +11,14 @@
  *   Usual GNU FREE GPL-1,2, MIT... apply to this project.                                *
  ******************************************************************************************/
 
-#include <lus/object.h>
+#include <obb/object.h>
 #include <iostream>
-#include <lus/colors.h>
-#include <lus/glyphes.h>
-#include <lus/string.h>
-#include <lus/journal.h>
+#include <obb/colors.h>
+#include <obb/glyphes.h>
+#include <obb/string.h>
+#include <obb/logbook.h>
 
-namespace lus
+namespace obb
 {
 
 object::object(object *ParentObj, const std::string &ObjID):
@@ -33,12 +33,12 @@ object::~object()
     m_id.clear();
 
     // if (m_children.empty())
-    //     journal::debug() << pretty_id() << " has no children objects. Skipping delete loop." << journal::eol;
+    //     book::debug() << pretty_id() << " has no children objects. Skipping delete loop." << book::eol;
     // else
-    //     journal::debug() << pretty_id() << " destroying " << m_children.size() << " children object(s). :" << journal::eol;
+    //     book::debug() << pretty_id() << " destroying " << m_children.size() << " children object(s). :" << book::eol;
     for(auto* o : m_children)
     {
-        //journal::info() << " destroy ['" << std::format("{:^20s}", o->pretty_id()) << "'] @" << o <<journal::eol;
+        //book::info() << " destroy ['" << std::format("{:^20s}", o->pretty_id()) << "'] @" << o <<book::eol;
         delete o;
     }
     m_children.clear();
@@ -83,7 +83,7 @@ void object::append_child(object *o)
 {
     if(get_child_iterator(o) != m_children.end())
     {
-        //journal::warning() << journal::fn::func << color::yellow << id() << color::reset << " already has child '" << color::yellow << o->id() << color::reset << "'";
+        //book::warning() << book::fn::func << color::yellow << id() << color::reset << " already has child '" << color::yellow << o->id() << color::reset << "'";
         return;
     }
     m_children.push_back(o);
@@ -93,7 +93,7 @@ void object::append_child(object *o)
 
 std::string object::pretty_id() const
 {
-    lus::string text;
+    obb::string text;
 
     auto [gh,colors] = rem::return_code_attributes(rem::cc::object_ptr);
     text

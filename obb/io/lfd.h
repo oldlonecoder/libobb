@@ -18,14 +18,14 @@
 
 #pragma once
 
-#include <lus/journal.h>
-#include <lus/notify.h>
+#include <obb/logbook.h>
+#include <obb/notify.h>
 #include <arpa/inet.h>
-#include <lus/notify.h>
-#include <lus/io/export.h>
+#include <obb/notify.h>
+#include <obb/io/export.h>
 
-using namespace lus::integers;
-namespace lus::io
+using namespace obb::integers;
+namespace obb::io
 {
 
 class LUSIOLIB lfd

@@ -19,19 +19,19 @@
 
 #pragma once
 
-#include <lus/est/alu.h>
-#include <lus/lexer/token_data.h>
-#include <lus/journal.h>
-#include <lus/object.h>
+#include <obb/est/alu.h>
+#include <obb/lexer/token_data.h>
+#include <obb/logbook.h>
+#include <obb/object.h>
 
 
-namespace lus::est
+namespace obb::est
 {
 
 
 
 
-class LUSESTLIB node : public lus::object
+class LUSESTLIB node : public obb::object
 {
 protected:
     alu*    _a_ {nullptr};  ///< alu / playing the role of accumulator for this node.
@@ -53,8 +53,8 @@ protected:
     }mem = { 0,0,0,0,0 }; ///< Storage types of this node.
 public:
     node();
-    node(lus::object* a_parent_scope);
-    node(lus::object* a_parent_scope, lex_token* a_token, alu* _a=nullptr);
+    node(obb::object* a_parent_scope);
+    node(obb::object* a_parent_scope, lex_token* a_token, alu* _a=nullptr);
 
     virtual ~node();
 
@@ -93,12 +93,12 @@ public:
     std::string trace_connect_postfix_operands(node* x);
     std::string trace_connect_binary_operands(node* x);
 #pragma region GRAPHVIZ_DOT
-    static void dot_tree_start(lus::string& a_out, const lus::string& Title);
-    static void dot_node(node* A, lus::string& a_out);
-    static void dot_null_node(node*, int, lus::string&);
-    static void dot_tree(node* a_root, lus::string& a_out);
-    static void dot_tree_close(lus::string& a_out);
-    void dot_attr(lus::string& a_out);
+    static void dot_tree_start(obb::string& a_out, const obb::string& Title);
+    static void dot_node(node* A, obb::string& a_out);
+    static void dot_null_node(node*, int, obb::string&);
+    static void dot_tree(node* a_root, obb::string& a_out);
+    static void dot_tree_close(obb::string& a_out);
+    void dot_attr(obb::string& a_out);
 #pragma endregion GRAPHVIZ_DOT
 
 private:

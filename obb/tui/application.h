@@ -15,19 +15,19 @@
 #pragma once
 
 
-#include <lus/ui/console.h>
-#include <lus/cmdargs.h>
-#include <lus/io/listener.h>
-#include <lus/io/kbhit.h>
+#include <obb/ui/console.h>
+#include <obb/cmdargs.h>
+#include <obb/io/listener.h>
+#include <obb/io/kbhit.h>
 
-namespace lus::ui
+namespace obb::ui
 {
 
 
 class LUSTUILIB application
 {
     std::string _id{};
-    lus::string::view_list _args{};
+    obb::string::view_list _args{};
     static application* _app;
     console             _console{"console"};
     io::listener _listener{"Application Console Input"};
@@ -38,7 +38,7 @@ class LUSTUILIB application
     virtual rem::cc install_signals();
 public:
     application()=default;
-    application(const std::string& _id, lus::string::view_list _args_);
+    application(const std::string& _id, obb::string::view_list _args_);
     virtual ~application();
 
     virtual rem::cc setup();
@@ -51,7 +51,7 @@ public:
 
 protected:
     rem::action stdin_ready(io::lfd& _fd);
-    virtual rem::cc setup_journal();
+    virtual rem::cc setup_book();
     rem::action poll_event();
 
 };

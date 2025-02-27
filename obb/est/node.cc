@@ -2,8 +2,8 @@
 // Created by oldlonecoder on 8/17/24.
 //
 
-#include <lus/est/node.h>
-#include <lus/est/expression.h>
+#include <obb/est/node.h>
+#include <obb/est/expression.h>
 /******************************************************************************************
  *   Copyright (C) ...,2024,... by Serge Lussier                                          *
  *   serge.lussier@oldlonecoder.club                                                      *
@@ -23,7 +23,7 @@
 
 
 
-namespace lus::est {
+namespace obb::est {
 
 
 static node* _global_root_bloc{nullptr};
@@ -138,7 +138,7 @@ node::node()
     mem.ref = 0;
 }
 
-node::node(lus::object* a_parent_scope) : lus::object(a_parent_scope, "node")
+node::node(obb::object* a_parent_scope) : obb::object(a_parent_scope, "node")
 {
     _a_ = new alu;
     mem.acc = 1;
@@ -152,11 +152,11 @@ node::~node()
 }
 
 
-node::node(lus::object* a_parent_scope, lex_token* a_token, alu* _a): lus::object(a_parent_scope, a_token ? std::string(a_token->text()) : "node")
+node::node(obb::object* a_parent_scope, lex_token* a_token, alu* _a): obb::object(a_parent_scope, a_token ? std::string(a_token->text()) : "node")
 {
     _token_ = a_token;
 
-    //journal::debug() << rem::fn::fun << "node::node => token details:[" << (t0 ? t0->Details() : "nullptr") << "]"<< rem::fn::endl ;
+    //book::debug() << rem::fn::fun << "node::node => token details:[" << (t0 ? t0->Details() : "nullptr") << "]"<< rem::fn::endl ;
 
     if (_a != nullptr)
     {
@@ -184,22 +184,22 @@ node::node(lus::object* a_parent_scope, lex_token* a_token, alu* _a): lus::objec
                 _op_fn_ = node::s_operator_table.find(a_token->m)->second;
 
                 if(!_op_fn_)
-                    throw journal::exception() [ journal::fatal() << _token_->mark(parent<bloc>()->source_code(), false) << rem::fn::endl << "as no implementation!" ];
+                    throw book::exception() [ book::fatal() << _token_->mark(parent<bloc>()->source_code(), false) << rem::fn::endl << "as no implementation!" ];
                 return;
             }
             if (_token_->sem & lex::type::Const)
             {
                 double d;
-                (lus::string(a_token->text())) >> d;
+                (obb::string(a_token->text())) >> d;
                 *_a_ = d;
-                journal::debug() <<  " acc: " << color::yellow << (*_a_)() << journal::eol;
+                book::debug() <<  " acc: " << color::yellow << (*_a_)() << book::eol;
             }
         }
         return;
         case lex::type::Hex:
         {
             uint64_t d;
-            lus::string(a_token->text()).hex(d);
+            obb::string(a_token->text()).hex(d);
             *_a_ = d;
             return;
         }
@@ -214,7 +214,7 @@ node::node(lus::object* a_parent_scope, lex_token* a_token, alu* _a): lus::objec
     }
 
     _op_fn_ = node::s_operator_table.find(a_token->m)->second;
-    //journal::debug() << rem::fn::fun << " acc: '" << color::yellow << (*acc)() << color::white << "'";
+    //book::debug() << rem::fn::fun << " acc: '" << color::yellow << (*acc)() << color::white << "'";
 }
 
 //Util::Object::Iterator node::GetChildIterator(node* c)
@@ -237,7 +237,7 @@ alu node::JSR()
 {
     //...
     try {
-        //journal::debug() << rem::fn::fun << color::white << attribute() << " Value:" << color::yellow << _a_->number<uint64_t>() << rem::fn::endl << _token_->Details(true) ;
+        //book::debug() << rem::fn::fun << color::white << attribute() << " Value:" << color::yellow << _a_->number<uint64_t>() << rem::fn::endl << _token_->Details(true) ;
         if (_token_->is_operator())
         {
             if (_l_) *_a_ = _l_->JSR(); // Always execute the lhs ast node so we return that one if this has no rhs operand (_r_ == null).
@@ -246,58 +246,58 @@ alu node::JSR()
             if (_op_fn_)
                 return (this->*_op_fn_)();// All operators assign _a_.
             else
-                journal::warning() <<  "operator node [" << color::yellow << _token_->text() << color::reset << "] has no implementation (yet?).:\n" << _token_->mark(parent<bloc>()->source_code(), false) << journal::eol;
+                book::warning() <<  "operator node [" << color::yellow << _token_->text() << color::reset << "] has no implementation (yet?).:\n" << _token_->mark(parent<bloc>()->source_code(), false) << book::eol;
         }
         else
         {
             if(_op_fn_)
             {
-                journal::debug() <<  " Non operator call: " <<  _token_->mark(parent<bloc>()->source_code(), false)  << journal::eol;
+                book::debug() <<  " Non operator call: " <<  _token_->mark(parent<bloc>()->source_code(), false)  << book::eol;
                 return (this->*_op_fn_)();
             }
 
         }
         _token_->sem |= _a_->T;
     }
-    catch(journal::exception& e)
+    catch(book::exception& e)
     {
-        journal::except() << e.what();
+        book::except() << e.what();
     }
     return *_a_;
 }
 
 
-//journal::Enums::Code node::AppendChild(node*c)
+//book::Enums::Code node::AppendChild(node*c)
 //{
 //    auto e = GetChildIterator(c);
 //    if(e != _children.end())
 //        _children.push_back(c);
 //    else
-//        return journal::Enums::Code::Exist;
+//        return book::Enums::Code::Exist;
 //
-//    return journal::Enums::Code::Accepted;
+//    return book::Enums::Code::Accepted;
 //}
 
 
-//journal::Enums::Code node::Detach(node* c)
+//book::Enums::Code node::Detach(node* c)
 //{
 //    auto i = GetChildIterator(c);
 //    if(i != _children.end())
 //        _children.erase(i);
 //    else
-//        return journal::Enums::Code::Notexist;
+//        return book::Enums::Code::Notexist;
 //
-//    return journal::Enums::Code::Accepted;
+//    return book::Enums::Code::Accepted;
 //}
 //
-//journal::Enums::Code node::detach()
+//book::Enums::Code node::detach()
 //{
 //    node* p = Parent<node>();
 //    if(p)
 //    {
 //        p->Detach(this);
 //    }
-//    return journal::Enums::Code::Accepted;
+//    return book::Enums::Code::Accepted;
 //}
 
 
@@ -307,32 +307,32 @@ alu node::LeftShift()
     if((_l_->_token_->sem & lex::type::Float) || (_r_->_token_->sem & lex::type::Float))
     {
         *_a_ = 0.f;
-        journal::warning() <<  _l_->_token_->name << " " << _token_->text() << " " << _r_->_token_->type_name() << " are incompatible" ;
+        book::warning() <<  _l_->_token_->name << " " << _token_->text() << " " << _r_->_token_->type_name() << " are incompatible" ;
     }
 
     *_a_ = _l_->_a_->number<uint64_t>() << _r_->_a_->number<uint64_t>();
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 alu node::Radical()
 {
     *_a_ = std::pow(_l_->_a_->number<double>(), 1 / _r_->_a_->number<double>());
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 alu node::Exponent()
 {
     *_a_ = std::pow(_l_->_a_->number<double>(), _r_->_a_->number<double>());
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 alu node::RightShift()
 {
     *_a_ = _l_->_a_->number<uint64_t>() >> _r_->_a_->number<uint64_t>();
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -340,7 +340,7 @@ alu node::RightShift()
 alu node::Decr()
 {
     *_a_ = _token_->has_type(lex::type::Prefix) ? --(*_r_->_a_) : (*_l_->_a_)--;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -348,7 +348,7 @@ alu node::Decr()
 alu node::Incr()
 {
     *_a_ = _token_->has_type(lex::type::Prefix) ? ++(*_r_->_a_) : (*_l_->_a_)++;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -356,7 +356,7 @@ alu node::Incr()
 alu node::AssignAdd()
 {
     *_a_ = *(_l_->_a_) += *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return  *_a_;
 }
 
@@ -364,7 +364,7 @@ alu node::AssignAdd()
 alu node::AssignSub()
 {
     *_a_ = *(_l_->_a_) -= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return  *_a_;
 }
 
@@ -372,7 +372,7 @@ alu node::AssignSub()
 alu node::AssignMul()
 {
     *_a_ = *(_l_->_a_) *= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -380,47 +380,47 @@ alu node::AssignMul()
 alu node::AssignDiv()
 {
     *_a_ = *(_l_->_a_) /= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::AssignMod()
 {
     *_a_ = *(_l_->_a_) %= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 
 }
 alu node::AssignAnd()
 {
     *_a_ = *(_l_->_a_) &= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 
 }
 alu node::AssignOr()
 {
     *_a_ = *(_l_->_a_) |= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 
 }
 alu node::AssignXor()
 {
     *_a_ = *(_l_->_a_) ^= *(_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 
 }
 alu node::AssignX1()
 {
     *_a_ = ~(*_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::AssignLShift()
 {
     *_a_ = *_l_->_a_ <<= *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -428,7 +428,7 @@ alu node::AssignLShift()
 alu node::AssignRShift()
 {
     *_a_ = *_l_->_a_ >>= *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -436,7 +436,7 @@ alu node::AssignRShift()
 alu node::Leq()
 {
     *_a_ = *_l_->_a_ <= *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -444,7 +444,7 @@ alu node::Leq()
 alu node::Geq()
 {
     *_a_ = *_l_->_a_ >= *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -452,7 +452,7 @@ alu node::Geq()
 alu node::Eq()
 {
     *_a_ = (*_l_->_a_) == (*_r_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -460,15 +460,15 @@ alu node::Eq()
 alu node::Neq()
 {
     *_a_ = *_l_->_a_ != *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 alu node::Add()
 {
-    journal::debug() <<  color::yellow << **_l_ << " " << color::cornflowerblue << _token_->text() << " " << color::yellow << **_r_ << ":";
+    book::debug() <<  color::yellow << **_l_ << " " << color::cornflowerblue << _token_->text() << " " << color::yellow << **_r_ << ":";
     *_a_ = *_l_->_a_ + *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::Sub()
@@ -476,46 +476,46 @@ alu node::Sub()
     // hack... en attendant :
     if (_token_->sem & lex::type::Sign)
         return Negative();
-    journal::debug() <<  color::lime
+    book::debug() <<  color::lime
                      << color::yellow << _l_->value()() << " " << color::cornflowerblue << attribute() << " " << color::yellow << _r_->value()() << ":";
     *_a_ = *_l_->_a_ - *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
 
     return *_a_;
 }
 alu node::Mul()
 {
-    journal::debug()
+    book::debug()
         << color::yellow << _l_->attribute()
         << color::cornflowerblue << attribute()
         << color::yellow << _r_->attribute();
     *_a_ = *_l_->_a_ * *_r_->_a_;
-    journal::write() << color::cornflowerblue << " => " << color::lime << (*_a_)() ;
+    book::write() << color::cornflowerblue << " => " << color::lime << (*_a_)() ;
     return *_a_;
 }
 alu node::Modulo()
 {
     *_a_ = *_l_->_a_ % *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::LessThan()
 {
     *_a_ = *_l_->_a_ < *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::GreaterThan()
 {
     *_a_ = *_l_->_a_ > *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::Assign()
 {
-    journal::debug() << color::aquamarine3 << _l_->attribute() << color::reset << " "
+    book::debug() << color::aquamarine3 << _l_->attribute() << color::reset << " "
                  << " " << color::lightcyan3 << attribute() << " "
-                 << color::yellow << _r_->value()() <<  journal::endl;
+                 << color::yellow << _r_->value()() <<  book::endl;
 
     *_l_->_a_ = *_r_->_a_;
     *_a_ = *_r_->_a_;
@@ -527,7 +527,7 @@ alu node::Assign()
 alu node::BinAnd()
 {
     *_a_ = *_l_->_a_ & *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 
@@ -535,7 +535,7 @@ alu node::BinAnd()
 alu node::BinOr()
 {
     *_a_ = *_l_->_a_ | *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 
@@ -543,21 +543,21 @@ alu node::BinOr()
 alu node::BitXor()
 {
     *_a_ = *_l_->_a_ ^ *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 
 alu node::X1()
 {
     *_a_ = ~(*_l_->_a_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 
 alu node::X2()
 {
     *_a_ = ~(*_l_->_a_) + alu(1);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 
@@ -565,7 +565,7 @@ alu node::X2()
 alu node::BitNot()
 {
     *_a_ = !_r_->_a_->number<double>();
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 
@@ -573,44 +573,44 @@ alu node::BitNot()
 alu node::BoolAnd()
 {
     *_a_ = *_l_->_a_ && *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 }
 alu node::BoolOr()
 {
     *_a_ = *_l_->_a_ || *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< journal::endl;
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)()<< book::endl;
     return *_a_;
 
 }
 
 alu node::Division()
 {
-    journal::debug() <<  color::lime
+    book::debug() <<  color::lime
                      << color::yellow << _l_->value()()
                      << " " << color::cornflowerblue << attribute() << " "
                      << color::yellow
-                 << _r_->value()() << ":" << journal::endl;
+                 << _r_->value()() << ":" << book::endl;
 
     *_a_ = *_l_->_a_ / *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " => " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " => " << color::lime << (*_a_)();
     return *_a_;
-    //journal::debug() << color::cornflowerblue << " = " << color::lime << (*acc)();
+    //book::debug() << color::cornflowerblue << " = " << color::lime << (*acc)();
 }
 
 
 alu node::Factorial()
 {
     //*acc = acc->factorial(*lhs->acc);
-    journal::debug() <<  color::lime << _l_->attribute()
+    book::debug() <<  color::lime << _l_->attribute()
                      << color::yellow << " " << (*_l_->_a_)() << " "
                      << color::cornflowerblue << attribute() << color::white << ":" ;
 
-    //journal::debug() << node::trace_connect_postfix_operands(this) ;
+    //book::debug() << node::trace_connect_postfix_operands(this) ;
 
     *_a_ = _l_->_a_->factorial();
 
-    journal::debug() << color::cornflowerblue << " => " << color::yellow << (*_a_)();
+    book::debug() << color::cornflowerblue << " => " << color::yellow << (*_a_)();
     return *_a_;
 }
 
@@ -622,14 +622,14 @@ alu node::Positive()
         *_r_->_a_ *= -1;
 
     *_a_ = *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 
 alu node::Negative()
 {
-    journal::debug() <<  color::lime
+    book::debug() <<  color::lime
                      << color::cornflowerblue << attribute()
                      << color::yellow << _r_->attribute()
         << color::white << "=" ;
@@ -638,7 +638,7 @@ alu node::Negative()
         *_r_->_a_ *= -1;
 
     *_a_ = *_r_->_a_;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -646,7 +646,7 @@ alu node::Negative()
 alu node::KPi()
 {
     *_a_ = alu(_PI_);
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -654,7 +654,7 @@ alu node::KPi()
 alu node::KCos()
 {
     *_a_ = std::cos(deg2rad(_r_));
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -662,13 +662,13 @@ alu node::KCos()
 alu node::KAcos()
 {
     *_a_ = std::acos(deg2rad(_r_));
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 alu node::KTan()
 {
     *_a_ = std::tan(deg2rad(_r_));
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -676,7 +676,7 @@ alu node::KTan()
 alu node::KAtan()
 {
     *_a_ = std::atan(deg2rad(_r_));
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
 
     return *_a_;
 }
@@ -684,14 +684,14 @@ alu node::KAtan()
 alu node::KSin()
 {
     *_a_ = std::sin(deg2rad(_r_));
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 alu node::KAsin()
 {
     *_a_ = std::asin(deg2rad(_r_));
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -704,14 +704,14 @@ alu node::KNumber()
 alu node::KU8()
 {
     *_a_ = _r_->_a_->number<uint64_t>() & 0xFF;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
 alu node::KU16()
 {
     *_a_ = _r_->_a_->number<uint64_t>() & 0xFFFF;
-    journal::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
+    book::debug() << color::cornflowerblue << " = " << color::lime << (*_a_)();
     return *_a_;
 }
 
@@ -735,7 +735,7 @@ alu node::KI8()
 
 alu node::KI16()
 {
-    journal::debug() <<  _r_->_token_->text();
+    book::debug() <<  _r_->_token_->text();
     *_a_ = static_cast<int16_t>(_r_->_a_->number<uint64_t>() & 0xFFFF);
     return *_a_;
 }
@@ -789,10 +789,10 @@ node::move_table_t node::move_tbl{};
 
 void node::build_move_table()
 {
-    journal::message() <<  " Building the associative/move table...";
+    book::message() <<  " Building the associative/move table...";
     if(!node::move_tbl.empty())
     {
-        journal::error() <<  " The associative/move table is already built.";
+        book::error() <<  " The associative/move table is already built.";
         return;
     }
     node::move_tbl.push_back({{lex::type::OpenPair, lex::type::Leaf | lex::type::Prefix | lex::type::Binary | lex::type::Id | lex::type::Number | lex::type::Const}, &node::set_to_left_operand});
@@ -817,12 +817,12 @@ node::input_table_t node::input_tbl =
 
 void node::syntax_error(node* e)
 {
-    throw journal::exception() [journal::syntax() << "at " << e->_token_->token_location() << rem::fn::endl << e->_token_->mark(e->parent<bloc>()->source_code(), false)] ;
+    throw book::exception() [book::syntax() << "at " << e->_token_->token_location() << rem::fn::endl << e->_token_->mark(e->parent<bloc>()->source_code(), false)] ;
 }
 
 void node::warning(node* x)
 {
-    journal::warning() << "at " << x->_token_->token_location() << rem::fn::endl << x->_token_->mark(x->parent<bloc>()->source_code(), false);
+    book::warning() << "at " << x->_token_->token_location() << rem::fn::endl << x->_token_->mark(x->parent<bloc>()->source_code(), false);
 }
 
 
@@ -846,7 +846,7 @@ node* node::tree_input(node* parent_bloc, lex_token* token, node::maker mk)
     {
         if (auto [l, r] = lr; (_token_->prim & l) && (token->prim & r))
         {
-            journal::debug() << color::yellow
+            book::debug() << color::yellow
             << _token_->text() << " <- "
             << color::yellow << token->text()
             << color::reset
@@ -866,7 +866,7 @@ node* node::tree_input(node* parent_bloc, lex_token* token, node::maker mk)
             {
                 a->detach();
                 delete a;
-                journal::write()
+                book::write()
                     << rem::type::syntax << ": invalid relational operands at "
                     << token->token_location()
                     << " - unexpected Token:" <<  token->details() << rem::fn::endl
@@ -874,16 +874,16 @@ node* node::tree_input(node* parent_bloc, lex_token* token, node::maker mk)
                     << " Should ends expression syntax tree (est) construct.";
                 return nullptr;
             }
-            journal::write() << _token_->text() << " -> tree_input(" << token->text() << "):" << rem::fn::endl << token->mark(parent<bloc>()->source_code(), false);
+            book::write() << _token_->text() << " -> tree_input(" << token->text() << "):" << rem::fn::endl << token->mark(parent<bloc>()->source_code(), false);
             return (this->*fn)(a);
         }
     }
 
-    journal::info() << color::white << "'" << color::yellow << _token_->text() << color::white << "'" << color::reset
+    book::info() << color::white << "'" << color::yellow << _token_->text() << color::white << "'" << color::reset
                     << "::tree_input(" << color::yellow << token->text() << color::reset << ") => invalid relational operands at "
                     << token->token_location() << " - unexpected token."
                     << rem::fn::endl << token->mark(parent<bloc>()->source_code(), false) << rem::fn::endl ;
-    journal::write() << _token_->details() << " || " << token->details() << rem::fn::endl << "Returning nullptr" ;
+    book::write() << _token_->details() << " || " << token->details() << rem::fn::endl << "Returning nullptr" ;
     return nullptr;
 }
 
@@ -923,9 +923,9 @@ node* node::tree_input_binary(node* a)
 
 void node::make_error(rem::cc ErrCode, node* source_node, node* input_node)
 {
-    throw journal::exception()
+    throw book::exception()
     [
-        journal::error() << source_node->attribute()
+        book::error() << source_node->attribute()
         << " TokenPtr TreeInput error: "
         << ErrCode
         << input_node->attribute()
@@ -936,7 +936,7 @@ void node::make_error(rem::cc ErrCode, node* source_node, node* input_node)
 
 void node::header(node* input_node, std::source_location&& Loc) const
 {
-    journal::debug(Loc)
+    book::debug(Loc)
     << color::yellow << _token_->type_name()
     << color::grey100 << "[" << color::blueviolet << _token_->text() << color::grey100 << "] "
     << color::lightsteelblue << " <== "
@@ -957,9 +957,9 @@ node* node::close_pair(node* a)
     const node* x = node::pop_par();
     if (!x)
     {
-        throw journal::exception()
+        throw book::exception()
         [
-            journal::except() << rem::type::syntax << "Unmatched left parenthesis:" << rem::fn::endl << a->_token_->mark(parent<bloc>()->source_code(), false)
+            book::except() << rem::type::syntax << "Unmatched left parenthesis:" << rem::fn::endl << a->_token_->mark(parent<bloc>()->source_code(), false)
         ];
         return nullptr;
     }
@@ -973,7 +973,7 @@ node* node::close_pair(node* a)
     if (a->_op_)
         a->_op_->_r_ = a; // oops!!
 
-    journal::debug()
+    book::debug()
         << "new TreeInput vertex:["
         << color::yellow
         << a->_token_->text()
@@ -1007,8 +1007,8 @@ node* node::collapse_par_pair(node* a)
 
     // Collapse lhs
     if(!_l_)
-        throw journal::exception()[
-            journal::except() << rem::type::syntax << " cannot 'collpase' parenthese sub-expr: no left-operand"
+        throw book::exception()[
+            book::except() << rem::type::syntax << " cannot 'collpase' parenthese sub-expr: no left-operand"
     ];
 
 
@@ -1025,7 +1025,7 @@ node* node::collapse_par_pair(node* a)
     // discard();
 
     if (_l_->_op_) {
-        journal::debug()
+        book::debug()
             << color::yellow << _l_->_op_->attribute() << color::cornflowerblue
             << " <-- "
             << color::yellow << a->attribute();
@@ -1058,8 +1058,8 @@ node* node::tree_begin(node* ParentObj, lex_token* a_token, node::maker node_mak
 {
 
     node::build_move_table();
-    journal::debug() << journal::eol;
-    journal::write() << color::yellow << rem::fn::endl << a_token->text();
+    book::debug() << book::eol;
+    book::write() << color::yellow << rem::fn::endl << a_token->text();
 
     node* a;
 
@@ -1084,24 +1084,24 @@ node* node::close_tree()
 
     if (_token_->m == lex::mnemonic::OpenPar)
     {
-        journal::error() << " unexpected End of file." ;
+        book::error() << " unexpected End of file." ;
         return nullptr;
     }
 
     if (!node::s_pars.empty())
     {
         const node* x = node::pop_par();
-        journal::error() << " umatched closing parenthese from:" << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
+        book::error() << " umatched closing parenthese from:" << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
         return nullptr;
     }
 
 
     if (_token_->m == lex::mnemonic::ClosePar) {
-        journal::debug() <<  "Closing the tree on close parenthese:";
+        book::debug() <<  "Closing the tree on close parenthese:";
         if (_l_)
         {
             node* x = _l_;
-            journal::debug() <<  "left hand side operand: " << _l_->_token_->details() << ":" << rem::fn::endl << _l_->_token_->mark(parent<bloc>()->source_code(), false);
+            book::debug() <<  "left hand side operand: " << _l_->_token_->details() << ":" << rem::fn::endl << _l_->_token_->mark(parent<bloc>()->source_code(), false);
 
             _l_->_op_ = _op_;
 
@@ -1121,7 +1121,7 @@ node* node::close_tree()
 node* node::tree_root(const bool skip_syntax)
 {
     header(this, std::source_location::current());
-    //journal::debug() << rem::fn::fun << "Match tree ins from node node:" << rem::fn::endl << _token_->mark(parent<bloc>()->source_code(), false) << rem::fn::endl ;
+    //book::debug() << rem::fn::fun << "Match tree ins from node node:" << rem::fn::endl << _token_->mark(parent<bloc>()->source_code(), false) << rem::fn::endl ;
     auto* x = this;
     node* p = x;
     do {
@@ -1133,25 +1133,25 @@ node* node::tree_root(const bool skip_syntax)
             case lex::type::Binary:
                 if (!x->_l_)
                 {
-                    journal::error() << "Syntax error: binary operator has no left operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
+                    book::error() << "Syntax error: binary operator has no left operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
                     return nullptr;
                 }
                 if (!x->_r_)
                 {
-                    journal::error() << "Syntax error: binary operator has no right operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
+                    book::error() << "Syntax error: binary operator has no right operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
                     return nullptr;
                 }
             case lex::type::Prefix:
                 if (!x->_r_)
                 {
-                    journal::error() << "Syntax error: prefix unary operator has no (right) operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
+                    book::error() << "Syntax error: prefix unary operator has no (right) operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
                     return nullptr;
                 }
                 break;
             case lex::type::Postfix:
                 if (!x->_l_)
                 {
-                    journal::error() << "Syntax error: postfix unary operator has no (left) operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
+                    book::error() << "Syntax error: postfix unary operator has no (left) operand." << rem::fn::endl << x->_token_->mark(parent<bloc>()->source_code(), false);
                     return nullptr;
                 }
                 break;
@@ -1179,7 +1179,7 @@ node* node::set_to_right_operand(node* in_rhs)
               /
             rhs
         */
-        journal::debug() <<  _token_->text() << " -> " << _r_->_token_->text()
+        book::debug() <<  _token_->text() << " -> " << _r_->_token_->text()
                          << color::lime << "::tree_set_right"
                          << color::white << " <- "
                          << color::yellow << in_rhs->_token_->text();
@@ -1190,7 +1190,7 @@ node* node::set_to_right_operand(node* in_rhs)
     in_rhs->_op_ = this;
     if (_token_->has_type(lex::type::Binary))
     {
-        journal::debug() <<  node::trace_connect_binary_operands(this);
+        book::debug() <<  node::trace_connect_binary_operands(this);
     }
     return in_rhs;
 }
@@ -1227,7 +1227,7 @@ node* node::set_to_left_operand(node* in_lhs)
  * \param Title
  * \note For now the colours are the halloween theme ;)
  */
-void node::dot_tree_start(lus::string& a_out, const lus::string& Title)
+void node::dot_tree_start(obb::string& a_out, const obb::string& Title)
 {
     a_out << "digraph arithmetic_expressionree {\n";
     a_out << "ratio=compress; ranksep=.55; size = \"6.5,6.5\"; bgcolor=\"#606060\"; \n";
@@ -1236,7 +1236,7 @@ void node::dot_tree_start(lus::string& a_out, const lus::string& Title)
     a_out << "    label = < <u> arithmetic expresion ast : </u> <br/> <br/>" << (std::string)Title << ">; fontsize = 16; fontcolor=\"#00d787\"\n"; // #0FAEFF
 }
 
-void node::dot_node(node* _a_, lus::string& a_out)
+void node::dot_node(node* _a_, obb::string& a_out)
 {
     //static int nullcount = 0;
     if (!_a_) return;
@@ -1254,27 +1254,27 @@ void node::dot_node(node* _a_, lus::string& a_out)
 
 }
 
-void node::dot_null_node(node*, int, lus::string&)
+void node::dot_null_node(node*, int, obb::string&)
 {
 
 }
 
-void node::dot_tree(node* a_root, lus::string& a_out)
+void node::dot_tree(node* a_root, obb::string& a_out)
 {
     a_root->dot_attr(a_out);
     node::dot_node(a_root, a_out);
 }
 
-void node::dot_tree_close(lus::string& a_out)
+void node::dot_tree_close(obb::string& a_out)
 {
     a_out << "}\n";
 }
 
-void node::dot_attr(lus::string& a_out)
+void node::dot_attr(obb::string& a_out)
 {
-    lus::string attr;
+    obb::string attr;
     attr << _token_->text();
-    lus::string Shape;
+    obb::string Shape;
     if (_token_->prim & lex::type::Text)
         Shape << "none";
     else
@@ -1295,7 +1295,7 @@ void node::dot_attr(lus::string& a_out)
 std::string node::trace_connect_binary_operands(node* x)
 {
     // assume this binary operator already has its lhs rhs operands !!
-    //lus::string str;
+    //obb::string str;
     auto lw = x->_l_->attribute().length();
     auto rw = x->_r_->attribute().length();
     auto ow = x->attribute().length();
@@ -1327,7 +1327,7 @@ std::string node::trace_connect_binary_operands(node* x)
 std::string node::trace_connect_postfix_operands(node* x)
 {
     // assume this binary operator already has its lhs rhs operands !!
-    //lus::string str;
+    //obb::string str;
     auto lw = x->_l_->attribute().length();
     //auto rw = x->rhs->attribute().length();
     auto ow = x->attribute().length();

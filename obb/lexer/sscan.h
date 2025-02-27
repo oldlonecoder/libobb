@@ -19,12 +19,12 @@
 
 #pragma once
 
-#include <lus/string.h>
-#include <lus/lexer/export.h>
+#include <obb/string.h>
+#include <obb/lexer/export.h>
  
 using namespace std::literals;
 
-namespace lus
+namespace obb
 {
 
 class LUSLEXERLIB sscan

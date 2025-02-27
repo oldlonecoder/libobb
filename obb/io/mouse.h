@@ -17,10 +17,10 @@
 
 
 #pragma once
-#include <lus/io/lfd.h>
-#include <lus/geometry.h>
+#include <obb/io/lfd.h>
+#include <obb/geometry.h>
 
-namespace lus::io
+namespace obb::io
 {
 
 
@@ -84,6 +84,6 @@ struct LUSIOLIB mouse
 
 };
 
-} // namespace lus::io
+} // namespace obb::io
 
 

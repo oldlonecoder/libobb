@@ -18,8 +18,8 @@
 
 
 #pragma once
-#include <lus/rem.h>
-#include <lus/cadres.h>
+#include <obb/rem.h>
+#include <obb/cadres.h>
 #include <iostream>
 #include <cstring>
 #include <sstream>
@@ -36,14 +36,14 @@
 #include <chrono>
 #include <stack>
 
-namespace lus
+namespace obb
 {
 
 using namespace integers;
 /*!
  * @brief lux string for accumulating substring using std tools such as std::fmt.
  */
-class LUSLIB string final
+class OBBLIB string final
 {
     std::string _d_;
 public:
@@ -141,7 +141,7 @@ public:
     #pragma region tokenizer
 
 
-    struct LUSLIB word final
+    struct OBBLIB word final
     {
         std::string::iterator begin{};
         std::string::iterator last{}; ///< not the std::string::end() but really the last valid character pointer int the word.
@@ -167,7 +167,7 @@ private:
 
 public:
     static std::string make_str(const char *B, const char *E) { return {B, E}; }
-    static std::string make_str(const lus::string::list& _list);
+    static std::string make_str(const obb::string::list& _list);
     static std::string now(const std::string &str_fmt);
     bool empty() { return _d_.empty(); }
 
@@ -206,7 +206,7 @@ public:
     static std::string bytes(std::vector<int> a_seq);
 
     static std::vector<std::string_view> string_view_list(int Count, char **s, int offset=0);
-    static lus::string::list make_list(int argc, char** argv, int offset=0);
+    static obb::string::list make_list(int argc, char** argv, int offset=0);
 };
 
 

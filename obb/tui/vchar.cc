@@ -2,12 +2,12 @@
 // Created by oldlonecoder on 25-02-06.
 //
 
-#include <lus/ui/vchar.h>
-#include <lus/journal.h>
-//#include <lus/ui/console.h>
+#include <obb/ui/vchar.h>
+#include <obb/logbook.h>
+//#include <obb/ui/console.h>
 
 
-namespace lus::ui
+namespace obb::ui
 {
 
 #define _eol_ color::pair(color::reset, color::reset)()
@@ -86,7 +86,7 @@ int vchar::bloc::column() const
 vchar::bloc& vchar::bloc::operator<<(const std::string& _str)
 {
     if (_str.length() >= (buffer->end()-_c_))
-        throw journal::exception()[ journal::except() << rem::type::fatal << rem::cc::oob];
+        throw book::exception()[ book::except() << rem::type::fatal << rem::cc::oob];
 
     for (auto c: _str)
     {
@@ -265,7 +265,7 @@ std::string vchar::get_utf_string() const
         case Frame:
             return cadre()[frame_id()];
         default: break;
-            //throw journal::exception() [journal::fatal() << " Memory corruption error into vchar data!"];
+            //throw book::exception() [book::fatal() << " Memory corruption error into vchar data!"];
         }
     }
     std::string s;
@@ -287,11 +287,11 @@ color::code vchar::background() const { return static_cast<color::code>((d & BGM
 [[maybe_unused]] glyph::type vchar::icon_id() const
 {
     if (!(d & UGlyph))
-        throw journal::exception() [ journal::except() << rem::cc::rejected << "attempt to use this vchar cell as a glyph which is not,"];
+        throw book::exception() [ book::except() << rem::cc::rejected << "attempt to use this vchar cell as a glyph which is not,"];
 
     auto Ic = d & CharMask;
-    if (Ic > glyph::journal)
-        throw journal::exception()[journal::except() <<  rem::cc::oob << ':' << Ic];
+    if (Ic > glyph::book)
+        throw book::exception()[book::except() <<  rem::cc::oob << ':' << Ic];
     return  Ic;
 }
 
@@ -300,7 +300,7 @@ color::code vchar::background() const { return static_cast<color::code>((d & BGM
 {
     auto AID = d & CharMask;
     if (AID > accent_fr::Ucirc)
-        throw journal::exception()[journal::fatal()  << rem::cc::oob << ':' << AID];
+        throw book::exception()[book::fatal()  << rem::cc::oob << ':' << AID];
 
     return static_cast<accent_fr::type>(AID);
 }
@@ -312,7 +312,7 @@ cadre::index vchar::frame_id() const
 {
     auto c = d & 0xff;
     if(c > 11)
-        throw journal::exception() [journal::except() << rem::cc::oob  << " invalid frame index: " << color::red4 << c];
+        throw book::exception() [book::except() << rem::cc::oob  << " invalid frame index: " << color::red4 << c];
 
     return static_cast<cadre::index>(d & 0xFF);
 }
@@ -361,7 +361,7 @@ vchar::operator std::string() const { return details(); }
 std::string vchar::render_line(vchar::string::iterator _it, std::size_t count)
 {
     color::pair current_colors = _it->colors();
-    //journal::debug() << "iterator details:" << _it->details() << journal::eol;
+    //book::debug() << "iterator details:" << _it->details() << book::eol;
     std::string _o = current_colors();
     auto c = _it;
     for(int x =0; x< count; x++)
@@ -406,8 +406,8 @@ std::string vchar::render_line(vchar::string::iterator _it, std::size_t count)
 std::string vchar::details() const
 {
 
-    lus::string infos;
-    lus::string utf_info{};
+    obb::string infos;
+    obb::string utf_info{};
     if(d & UTFBITS)
     {
         switch(d & UTFBITS)

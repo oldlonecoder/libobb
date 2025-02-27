@@ -19,11 +19,11 @@
 
 #pragma once
 
-#include <lus/lexer/lexer.h>
-#include "lus/est/bloc.h"
+#include <obb/lexer/lexer.h>
+#include "obb/est/bloc.h"
 
 
-namespace lus::est 
+namespace obb::est 
 {
 
 class LUSESTLIB expr : public bloc

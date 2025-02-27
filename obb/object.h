@@ -18,17 +18,17 @@
 
 
 #pragma once
-#include <lus/rem.h>
+#include <obb/rem.h>
 #include <vector>
 #include <functional>
 
 
-namespace lus
+namespace obb
 {
 
 using namespace integers;
 
-class  LUSLIB object
+class  OBBLIB object
 {
     CLASSNAME_START(object)
 protected:
@@ -53,7 +53,7 @@ public:
     object::iterator get_child_iterator(object* obj);
     [[maybe_unused]] object::iterator get_child_iteratorby_id(const std::string& aid);
 
-    //journal::Enums::Code detach();
+    //book::Enums::Code detach();
     rem::cc detach(object* obj_ptr=nullptr);
     // -- All does the same, ...as a different name lol!
 

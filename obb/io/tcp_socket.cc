@@ -11,11 +11,11 @@
  ***************************************************************************/
 
 
-#include <lus/io/tcp_socket.h>
-#include <lus/string.h>
+#include <obb/io/tcp_socket.h>
+#include <obb/string.h>
 
 
-namespace lus::io {
+namespace obb::io {
 
 
 tcp_socket::tcp_socket(object* parent, const std::string& ii): object(parent,ii)
@@ -36,7 +36,7 @@ int tcp_socket::create()
 {
     m_fd = ::socket(PF_INET,SOCK_STREAM, 0);
     //u_int32_t options = ifd::O_BLOCK|ifd::O_BUF|ifd::O_READ|ifd::O_WRITE|ifd::O_WINDOWED;
-    lus::string str;
+    obb::string str;
     str << id() << ':' << m_fd;
 
     m_ifd = new lfd(str(), m_fd, 4096, lfd::IMM|lfd::READ|lfd::WRITE, EPOLLIN|EPOLLOUT|EPOLLHUP|EPOLLERR, nullptr);
@@ -46,7 +46,7 @@ int tcp_socket::create()
 void tcp_socket::set_sockfd(int fd)
 {
     m_fd = fd;
-    lus::string str;
+    obb::string str;
     str << id() << ':' << m_fd;
 
     m_ifd = new lfd(str(), m_fd, 4096, lfd::IMM|lfd::READ|lfd::WRITE, EPOLLIN|EPOLLOUT|EPOLLHUP|EPOLLERR, nullptr);
@@ -59,11 +59,11 @@ hostent* tcp_socket::host(const char* node, uint port, sockaddr_in* _addr_in, st
 
     int a,b,c,d;
 
-    lus::string SNodeIP = "%d.%d.%d.%d";
+    obb::string SNodeIP = "%d.%d.%d.%d";
 
 
     if (!he ) {
-        journal::error() << "gethostbyname failed!!"  << journal::endl;
+        book::error() << "gethostbyname failed!!"  << book::endl;
         ///@todo traiter l'erreur du DNS
         return 0l;
     }
@@ -75,15 +75,15 @@ hostent* tcp_socket::host(const char* node, uint port, sockaddr_in* _addr_in, st
     d = (int)((unsigned char)he->h_addr_list[0][3]);
 
     // Juste  pour le deboggage:
-    journal::info()
+    book::info()
         << "host:"
         << he->h_name
         << " Adresse IP effective: " << a << "." << b <<"." << c<< "." << d
-        << "   contenu de h_addr_list[0]:" << (unsigned long)he->h_addr_list[0] << " PORT:" << port << journal::endl;
+        << "   contenu de h_addr_list[0]:" << (unsigned long)he->h_addr_list[0] << " PORT:" << port << book::endl;
     ////////////////////////////////////////////////////////////////////////////////
     SNodeIP |a|b|c|d;
     NodeIP = SNodeIP();
-    journal::info() << "node=" << NodeIP;
+    book::info() << "node=" << NodeIP;
 
 
     if (_addr_in) {
@@ -108,8 +108,8 @@ char* tcp_socket::machine_hostname()
 
 int tcp_socket::mkaddr(void* addr, int* addr_len, const char* addr_str, const char* proto)
 {
-    lus::string saddress = addr_str;
-    lus::string::word::list htokens{};
+    obb::string saddress = addr_str;
+    obb::string::word::list htokens{};
 
     auto n = saddress.words(htokens, false, ":");
 
@@ -168,7 +168,7 @@ int tcp_socket::mkaddr(void* addr, int* addr_len, const char* addr_str, const ch
 
     *addr_len = sizeof(*ap);
 
-    journal::info() << "finalized socket addr infos [port]::" << ntohs(ap->sin_port) << journal::endl;
+    book::info() << "finalized socket addr infos [port]::" << ntohs(ap->sin_port) << book::endl;
     return 0;
 }
 

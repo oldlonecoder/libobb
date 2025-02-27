@@ -17,9 +17,9 @@
 
 
 #pragma once
-#include <lus/lexer/token_data.h>
+#include <obb/lexer/token_data.h>
 
-namespace lus
+namespace obb
 {
 
 class LUSLEXERLIB  token_table

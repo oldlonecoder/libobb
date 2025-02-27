@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include <lus/rem.h>
+#include <obb/rem.h>
 #include <functional>
 #include <utility>
 
@@ -23,7 +23,7 @@
 // Modified and adapted for Rem and implement in basic threads, by oldlonecoder
 // ------------------------------------------------------------------
 
-namespace lus::signals
+namespace obb::signals
 {
 
 

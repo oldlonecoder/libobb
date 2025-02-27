@@ -18,8 +18,8 @@
 
 #pragma once
 
-#include <lus/colors.h>
-#include <lus/glyphes.h>
+#include <obb/colors.h>
+#include <obb/glyphes.h>
 
 /*!
  * @brief Return Enumeration Mnemonics  ( A coherent return mnemonics system )
@@ -28,11 +28,11 @@ namespace rem
 {
 
 
-enum class type : lus::integers::U8{
-    none, err, warning, fatal, except, message, output, debug, info, comment, syntax, status, test, interrupted, aborted, segfault, journal
+enum class type : obb::integers::U8{
+    none, err, warning, fatal, except, message, output, debug, info, comment, syntax, status, test, interrupted, aborted, segfault, book
 };
 
-    enum class cc : lus::integers::U8
+    enum class cc : obb::integers::U8
     {
         ok  =0           , ///< Obviously;
         accepted         ,
@@ -79,7 +79,7 @@ enum class type : lus::integers::U8{
     };
 
 
-    enum class fn : lus::integers::U8
+    enum class fn : obb::integers::U8
     {
         func             ,
         endl             , ///< End of line Code, input format
@@ -97,13 +97,13 @@ enum class type : lus::integers::U8{
         year
     };
 
-    enum class action : lus::integers::U8
+    enum class action : obb::integers::U8
     {
         enter            , ///< enter bloc or indent
-        leave            , ///< End (journalger: End of entry accumulators, so do commit); End of (sel)Section, Attribute ( auto-color::reset ) and unindent
+        leave            , ///< End (bookger: End of entry accumulators, so do commit); End of (sel)Section, Attribute ( auto-color::reset ) and unindent
         commit           , ///< Commit...
         begin            , ///< Begin (sel)Section or augment indent level
-        end              , ///< End   Loop/Action or End selection or Unindent one level; or end inputs on the current journalentry then flush to file.
+        end              , ///< End   Loop/Action or End selection or Unindent one level; or end inputs on the current bookentry then flush to file.
         cont          , ///< Continue Loop and/or continue Signals::Action iteration.
         dismiss          , ///< The current action or iteration has been dismissed : break run or actual action.
     };
@@ -112,10 +112,10 @@ std::string to_string(rem::type ty);
 std::string to_string(rem::cc cod);
 std::string to_string(rem::fn fn);
 std::string to_string(rem::action a);
-std::pair<lus::glyph::type, lus::ui::color::pair> type_attributes(rem::type ty);
-std::pair<lus::glyph::type, lus::ui::color::pair> return_code_attributes(rem::cc cod);
-std::pair<lus::glyph::type, lus::ui::color::pair> function_attributes(rem::fn fn);
-std::pair<lus::glyph::type, lus::ui::color::pair> action_attributes(rem::action a);
+std::pair<obb::glyph::type, obb::ui::color::pair> type_attributes(rem::type ty);
+std::pair<obb::glyph::type, obb::ui::color::pair> return_code_attributes(rem::cc cod);
+std::pair<obb::glyph::type, obb::ui::color::pair> function_attributes(rem::fn fn);
+std::pair<obb::glyph::type, obb::ui::color::pair> action_attributes(rem::action a);
 
 }
 

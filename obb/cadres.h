@@ -20,15 +20,15 @@
 
 
 #include <stack>
-#include <lus/colors.h>
-#include <lus/glyphes.h>
+#include <obb/colors.h>
+#include <obb/glyphes.h>
 
-namespace lus
+namespace obb
 {
 
 using namespace integers;
 using ui::color;
-struct LUSLIB cadre
+struct OBBLIB cadre
 {
     color::pair colors;     ///< colours of the box::frame
 
@@ -37,7 +37,7 @@ struct LUSLIB cadre
  * @brief 1v x 4h matrix for addressing Frame components
  * @note  : Source : https://github.com/ArthurSonzogni/FTXUI/blob/main/src/ftxui/screen/string.cpp
  */
-    struct LUSLIB frame_matrix
+    struct OBBLIB frame_matrix
     {
         uint8_t Left : 2;
         uint8_t Top  : 2;
@@ -48,7 +48,7 @@ struct LUSLIB cadre
         bool operator < (cadre::frame_matrix RHS) const;
     };
 
-    struct LUSLIB frame_data
+    struct OBBLIB frame_data
     {
         glyph::T TL; ///< Top Left
         glyph::T TR; ///< Top Right

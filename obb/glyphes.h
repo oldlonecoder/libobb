@@ -19,16 +19,16 @@
 
 #pragma once
 
-#include <lus/colors.h>
+#include <obb/colors.h>
 #include <map>
 #include <vector>
 #include <string>
 #include <string_view>
 
-namespace lus
+namespace obb
 {
 
-struct LUSLIB glyph
+struct OBBLIB glyph
 {
 
     using T = const char*;
@@ -140,7 +140,7 @@ struct LUSLIB glyph
     static constexpr T c_stop                  = "⏹ ";      //Stop;
     static constexpr T c_debian                = " ";
     static constexpr T c_terminal              = " ";       // Terminal
-    static constexpr T c_journal                   = "";        // journal
+    static constexpr T c_book                   = "";        // book
     static constexpr T c_sqpixel               = "▀";       // Pixel
     static constexpr T c_fbox                  = "█";
     static constexpr T c_dnpixel               = "▄";
@@ -251,7 +251,7 @@ struct LUSLIB glyph
     static constexpr type stop               = 103;
     static constexpr type debian             = 104;
     static constexpr type terminal           = 105;
-    static constexpr type journal                = 106;
+    static constexpr type book                = 106;
     static constexpr type sqpixel            = 107;
     static constexpr type fbox               = 108;
     static constexpr type dnpixel            = 109;
@@ -376,7 +376,7 @@ For anyone interested, here'Code the fixed version (I hope you don't mind, I'll 
 
 
 
-struct LUSLIB accent_fr
+struct OBBLIB accent_fr
 {
     using T = const char*;
 

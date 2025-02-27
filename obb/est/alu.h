@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include <lus/journal.h>
-#include <lus/lexer/lexer_types.h>
+#include <obb/logbook.h>
+#include <obb/lexer/lexer_types.h>
 //#include <lus++/defs.h>
 
 #include <memory>
@@ -24,8 +24,8 @@
 #include <map>
 #include <stack>
 
-#include <lus/est/export.h>
-namespace lus::est
+#include <obb/est/export.h>
+namespace obb::est
 {
 /*!
  * @brief Arithmetic Logical Unit
@@ -95,7 +95,7 @@ struct LUSESTLIB alu
 #pragma region Huge_Overload
     template<typename oftype> [[nodiscard]]oftype value() const {
 
-        //rem::debug() << lus::fn::function << "> this = " << lus::color::lightcyan3 <<  v.d << lus::color::reset << " : types: " << lex::glex_component::type_name(T) << lus::fn::endl;
+        //rem::debug() << obb::fn::function << "> this = " << obb::color::lightcyan3 <<  v.d << obb::color::reset << " : types: " << lex::glex_component::type_name(T) << obb::fn::endl;
 
         if constexpr ((std::is_same_v<oftype, std::string>) || (std::is_same_v<oftype, const std::string&>))
             return (T & lex::type::Text ? text : "");
@@ -122,7 +122,7 @@ struct LUSESTLIB alu
 
     template<typename oftype> [[nodiscard]] oftype number() const
     {
-        //rem::debug() << lus::fn::function << "> this = " << lus::color::lightcyan1 << v.d << lus::color::reset << " : types: " << lex::glex_component::type_name(T);
+        //rem::debug() << obb::fn::function << "> this = " << obb::color::lightcyan1 << v.d << obb::color::reset << " : types: " << lex::glex_component::type_name(T);
         if constexpr (std::is_same_v<oftype, void*>)
             return v.p;
         else

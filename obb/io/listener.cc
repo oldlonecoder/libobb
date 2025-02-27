@@ -2,10 +2,10 @@
 // Created by oldlonecoder on 25-02-03.
 //
 
-#include <lus/io/listener.h>
+#include <obb/io/listener.h>
 #include <cerrno>
 
-namespace lus::io
+namespace obb::io
 {
 
 
@@ -30,11 +30,11 @@ std::pair<rem::cc, lfd&> listener::attach(lfd&& fds)
     fd.init();
     e.events = fd._poll_bits;
     e.data.fd = fd._fd;
-    journal::info() << "attach new fd: " << color::yellow << fd._id << color::z << ":" <<journal::endl;
+    book::info() << "attach new fd: " << color::yellow << fd._id << color::z << ":" <<book::endl;
 
     if (epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, fd._fd, &e) < 0)
     {
-        journal::error() << "epoll_ctl() failed: " << std::strerror(errno) << journal::endl;
+        book::error() << "epoll_ctl() failed: " << std::strerror(errno) << book::endl;
         fd._flags.active = 0;
     }
     return {rem::cc::accepted, _fds.back()};
@@ -44,7 +44,7 @@ std::pair<rem::cc, lfd&> listener::attach(lfd&& fds)
 // std::pair<rem::cc, lfd&> listener::add_fd(lfd&& fds)
 // {
 //     _fds.emplace_back(std::move(fds));
-//     journal::info() << "added " << color::aqua << _fds.back()._id << color::z << journal::endl;
+//     book::info() << "added " << color::aqua << _fds.back()._id << color::z << book::endl;
 //     return {rem::cc::accepted, _fds.back()};
 // }
 
@@ -57,7 +57,7 @@ rem::cc listener::detach(int fnum)
     });
 
     if (fdi == _fds.end()) return rem::cc::rejected;
-    journal::info() << "detach and remove lfd '" << fdi->_id << color::z << "' from this listener." << journal::endl;
+    book::info() << "detach and remove lfd '" << fdi->_id << color::z << "' from this listener." << book::endl;
     epoll_ctl(_epoll_fd, EPOLL_CTL_DEL, fdi->_fd, nullptr);
     _fds.erase(fdi);
 
@@ -80,18 +80,18 @@ rem::cc listener::run()
     {
         if (_fds.empty())
         {
-            journal::warning() << color::yellow << "cancelling this listener: fd list is empty()..." << journal::endl;
+            book::warning() << color::yellow << "cancelling this listener: fd list is empty()..." << book::endl;
             if (_epoll_fd > 2 )
                 close();
             return rem::cc::rejected;
         }
 
         auto nevents = epoll_wait(_epoll_fd, _poll_events, listener::max_events,-1);
-        journal::info() << color::yellow << nevents << color::z << " events:" << journal::endl;
+        book::info() << color::yellow << nevents << color::z << " events:" << book::endl;
         refresh_fds();
         if ((nevents <= 0) && (errno != EINTR))
         {
-            journal::error() << "epoll_wait() failed: (events count = " << color::yellow << nevents << color::z << "): " << color::deeppink8 <<  strerror(errno) << journal::endl;
+            book::error() << "epoll_wait() failed: (events count = " << color::yellow << nevents << color::z << "): " << color::deeppink8 <<  strerror(errno) << book::endl;
             return rem::cc::failed;
         }
         for (int n = 0; n < nevents; n++)
@@ -105,18 +105,18 @@ rem::cc listener::run()
                         if (fd._flags.active)
                         {
                             auto a = fd._read();
-                            //journal::debug() << color::aqua << fd._id << color::z << ": [" << static_cast<int>(a) << "] " << rem::to_string(a) << journal::endl;
+                            //book::debug() << color::aqua << fd._id << color::z << ": [" << static_cast<int>(a) << "] " << rem::to_string(a) << book::endl;
                             if (a != rem::action::cont){
-                                //journal::info() << "[" << a << "] active lfd to be killed."  << journal::endl;
+                                //book::info() << "[" << a << "] active lfd to be killed."  << book::endl;
                                 fd.kill();
                             }
                         }
                         else
-                            journal::debug() << " invoked lfd is NOT active." << journal::endl;
+                            book::debug() << " invoked lfd is NOT active." << book::endl;
                     }
                     if ((_poll_events[n].events & EPOLLHUP) || (_poll_events[n].events & EPOLLERR))
                     {
-                        journal::info() << " broken link on '" << color::aqua << fd._id << color::z <<  journal::endl;
+                        book::info() << " broken link on '" << color::aqua << fd._id << color::z <<  book::endl;
                         fd.kill();
                         continue;
                     }
@@ -135,17 +135,17 @@ rem::cc listener::poll(int _fd)
     auto [r, f] = query_lfd(_fd);
     if(!r)
     {
-        journal::error() << " file descriptor #" << color::red4 << _fd << color::z << " is not registered into this listener's group." << journal::eol;
+        book::error() << " file descriptor #" << color::red4 << _fd << color::z << " is not registered into this listener's group." << book::eol;
         return r;
     }
 
     auto nevents = epoll_wait(_epoll_fd, _poll_events, listener::max_events,-1);
-    journal::info() << color::yellow << nevents << color::z << " events:" << journal::endl;
+    book::info() << color::yellow << nevents << color::z << " events:" << book::endl;
     refresh_fds();
 
     if ((nevents <= 0) && (errno != EINTR))
     {
-        journal::error() << "epoll_wait() failed: (events count = " << color::yellow << nevents << color::z << "): " << color::deeppink8 <<  strerror(errno) << journal::endl;
+        book::error() << "epoll_wait() failed: (events count = " << color::yellow << nevents << color::z << "): " << color::deeppink8 <<  strerror(errno) << book::endl;
         return rem::cc::failed;
     }
     rem::action A{};
@@ -156,21 +156,21 @@ rem::cc listener::poll(int _fd)
             if (f._flags.active)
             {
                 A = f._read(); // Actual read and process input data signal
-                //journal::debug() << color::aqua << fd._id << color::z << ": [" << static_cast<int>(a) << "] " << rem::to_string(a) << journal::endl;
+                //book::debug() << color::aqua << fd._id << color::z << ": [" << static_cast<int>(a) << "] " << rem::to_string(a) << book::endl;
                 if (A != rem::action::cont){
-                    journal::info() << "[" << A << "] active lfd to be killed."  << journal::endl;
+                    book::info() << "[" << A << "] active lfd to be killed."  << book::endl;
                     f.kill();
                     return rem::cc::terminate;
                 }
             }
             else
-                journal::debug() << " invoked lfd is NOT active." << journal::endl;
+                book::debug() << " invoked lfd is NOT active." << book::endl;
         }
         else
         {
             if ((_poll_events[0].events & EPOLLHUP) || (_poll_events[0].events & EPOLLERR))
             {
-                journal::info() << " broken link on '" << color::aqua << f._id << color::z <<  journal::endl;
+                book::info() << " broken link on '" << color::aqua << f._id << color::z <<  book::endl;
                 f.kill();
                 return rem::cc::terminate;
             }
@@ -205,7 +205,7 @@ rem::cc listener::refresh_fds()
     {
         if (fd._flags.kill || fd._flags.del)
         {
-            journal::info() << "removing lfd: '" << color::aqua << fd._id << color::z << journal::endl;
+            book::info() << "removing lfd: '" << color::aqua << fd._id << color::z << book::endl;
             if (fd._flags.kill)
                 detach(fd._fd);
             else
@@ -221,12 +221,12 @@ rem::cc listener::open()
     _epoll_fd = epoll_create1(0);
     if (_epoll_fd < 0)
     {
-        journal::error() << "epoll_create1() failed: " << strerror(errno) << journal::endl;
+        book::error() << "epoll_create1() failed: " << strerror(errno) << book::endl;
         return rem::cc::rejected;
     }
 
-    journal::info() << "listener opened: file # " << color::yellow << _epoll_fd << color::z;
-    journal::write() << "ready to run" << journal::endl;
+    book::info() << "listener opened: file # " << color::yellow << _epoll_fd << color::z;
+    book::write() << "ready to run" << book::endl;
 
     return rem::cc::ready;
 }
@@ -236,7 +236,7 @@ rem::cc listener::close()
 {
     _fds.clear();
     ::close(_epoll_fd);
-    journal::info() << "listener is closed clean." << journal::endl;
+    book::info() << "listener is closed clean." << book::endl;
     return rem::cc::ok;
 }
 

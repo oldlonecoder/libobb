@@ -1,8 +1,8 @@
 
 
-#include <lus/io/ansi_parser.h>
+#include <obb/io/ansi_parser.h>
 
-namespace lus::io
+namespace obb::io
 {
 
 
@@ -27,7 +27,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
     // We start CSI here : Keyboard or Mouse report:
     if(*_fd != 0x1b)
     {
-        journal::status() << "unknown or unhandled input sequence from the console." << journal::eol;
+        book::status() << "unknown or unhandled input sequence from the console." << book::eol;
         return {rem::cc::notimplemented,{}};
     }
 
@@ -59,11 +59,11 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_kbhit(lfd &_fd)
 std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_mouse(std::vector<int> &&_args)
 {
     // pressed 'flag' ignored. Relying on the XTerm Button and meta state byte which reports buttons on the lasts two bits:
-    journal::debug() << journal::endl;
+    book::debug() << book::endl;
     mouse mev{};
 
     if (_args.size() != 3){
-        journal::error() << " missing or extra arguments : expected 3, got " << color::yellow << _args.size() << journal::eol;
+        book::error() << " missing or extra arguments : expected 3, got " << color::yellow << _args.size() << book::eol;
         return {rem::cc::rejected,{}};
     }
 
@@ -80,13 +80,13 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_mouse(std::vector
     mev.state.win       = (_args[0] & 0x10) != 0;
 
     if(mev.state.alt)
-        journal::info() << color::pair({.fg=color::grey100, .bg=color::red4}) << "meta" << journal::endl;
+        book::info() << color::pair({.fg=color::grey100, .bg=color::red4}) << "meta" << book::endl;
     // Subtract 1 from the coords. Because the terminal starts at 1,1 and our ui system starts 0,0
     mev.pos.x = _args[1]-1;
     mev.pos.y = _args[2]-1;
     //mev.move = console::mev().pos != mev.pos;
     //mev.dxy = {mev.pos.x-console::mev().pos.x, mev.pos.y-console::mev().pos.y};
-    //journal::info() << "mouse data:" << mev.to_string() << journal::endl;
+    //book::info() << "mouse data:" << mev.to_string() << book::endl;
 
     return {rem::cc::ready,{mev}};
 }
@@ -110,16 +110,16 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_csi(lfd &_fd)
     std::vector<int> args{};
     if(*_fd != 0x1b)
     {
-        journal::error() << rem::cc::expected << " ESC code on the buffer at the current position." << journal::eol;
+        book::error() << rem::cc::expected << " ESC code on the buffer at the current position." << book::eol;
         return {rem::cc::rejected,{}};
     }
-    journal::status() << "csi begin:" << journal::eol;
+    book::status() << "csi begin:" << book::eol;
 
 
     do{
         _fd >> b;
         if(b == '<'){
-            journal::write() << "Altered [ ignored as of now ]" << journal::eol;
+            book::write() << "Altered [ ignored as of now ]" << book::eol;
             //...
             continue;
         }
@@ -142,17 +142,17 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_csi(lfd &_fd)
         // To handle F1-F4, we exclude '['.
         if ((b >= '@') && (b <= '~') && (b != '<') && (b != '[')){
             args.push_back(arg);
-            journal::status() << "end csi sequence on '" << color::yellow << b << color::z << "' :" << journal::eol;
+            book::status() << "end csi sequence on '" << color::yellow << b << color::z << "' :" << book::eol;
             switch(b)
             {
                 case 'M' : case 'm':
                     type = ansi_parser::MEV;
                     return parse_mouse(std::move(args));
                 case 'R':
-                    journal::warning() <<" R :Caret report - ignored" << journal::eol;
+                    book::warning() <<" R :Caret report - ignored" << book::eol;
                     return {rem::cc::notimplemented,{}};
                 default:
-                    journal::error() << " Unhandled csi sequence. " << journal::eol;
+                    book::error() << " Unhandled csi sequence. " << book::eol;
                     break;
             }
             return {rem::cc::unhandled,{}};
@@ -162,4 +162,4 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_csi(lfd &_fd)
     return {rem::cc::unhandled,{}};
 }
 
-} // namespace lus::io
+} // namespace obb::io

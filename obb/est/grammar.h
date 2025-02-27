@@ -15,14 +15,14 @@
 #pragma once
 
 
-#include "lus/lexer/lexer.h"
-//#include <lus/lexer/token_data.h>
-#include <lus/glyphes.h>
-#include <lus/string.h>
-#include <lus/colors.h>
-#include <lus/est/export.h>
+#include "obb/lexer/lexer.h"
+//#include <obb/lexer/token_data.h>
+#include <obb/glyphes.h>
+#include <obb/string.h>
+#include <obb/colors.h>
+#include <obb/est/export.h>
 
-//#include "lus/lexer/tokens_table.h"
+//#include "obb/lexer/tokens_table.h"
 
 /*
 
@@ -60,7 +60,7 @@ objcfncall         : '[' function_id  *Args ']'.
 
 */
 
-namespace lus::est
+namespace obb::est
 {
 
 using namespace integers;

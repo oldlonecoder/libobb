@@ -14,7 +14,7 @@ set(HEADERS
     ${PROJECT_NAME}/expect.h
     ${PROJECT_NAME}/geometry.h
     ${PROJECT_NAME}/glyphes.h
-    ${PROJECT_NAME}/journal.h
+    ${PROJECT_NAME}/logbook.h
     ${PROJECT_NAME}/object.h
     ${PROJECT_NAME}/rem.h
     ${PROJECT_NAME}/string.h
@@ -26,7 +26,7 @@ add_library( ${PROJECT_NAME} STATIC
     ${HEADERS}
     ${PROJECT_NAME}/colors.cc
     ${PROJECT_NAME}/geometry.cc
-    ${PROJECT_NAME}/journal.cc
+    ${PROJECT_NAME}/logbook.cc
     ${PROJECT_NAME}/cadres.cc
     ${PROJECT_NAME}/glyphes.cc
     ${PROJECT_NAME}/object.cc

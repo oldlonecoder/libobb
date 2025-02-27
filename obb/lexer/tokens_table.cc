@@ -4,9 +4,9 @@
 
 
 
-#include <lus/lexer/tokens_table.h>
-#include <lus/journal.h>
-namespace lus
+#include <obb/lexer/tokens_table.h>
+#include <obb/logbook.h>
+namespace obb
 {
 
     using ui::color;
@@ -156,7 +156,7 @@ token_table::type_colours _static_type_colours_table_
 {
     if(!ref_table.empty())
     {
-        journal::warning() << rem::cc::notempty << journal::eol;
+        book::warning() << rem::cc::notempty << book::eol;
     }
     ref_table = lex_token::list{
         {
@@ -1128,33 +1128,33 @@ token_table::~token_table()
 
 lex_token token_table::scan(const char* C)
 {
-    journal::debug() << " scanning[" << color::yellow << *C <<  color::reset << ']' << journal::endl;
+    book::debug() << " scanning[" << color::yellow << *C <<  color::reset << ']' << book::endl;
     if(ref_table.empty())
     {
-        journal::warning() << " tokens reference table is empty";
+        book::warning() << " tokens reference table is empty";
         return {};
     }
 
     int unicode = 0;
     if (!*C)
     {
-        journal::info() << rem::cc::eof << journal::endl;
+        book::info() << rem::cc::eof << book::endl;
         return {};
     }
 
     for (auto token : ref_table)
     {
-        //journal::Debug() << "Token Ref loop:'" << Color::Yellow << token.name << Color::Reset << ": (" << Color::HotPink4 << token.token_location.begin << Color::Reset << "<=>" << Color::Lime << *C << Color::Reset << "):";
+        //book::Debug() << "Token Ref loop:'" << Color::Yellow << token.name << Color::Reset << ": (" << Color::HotPink4 << token.token_location.begin << Color::Reset << "<=>" << Color::Lime << *C << Color::Reset << "):";
         std::string_view::iterator crs = C;
         std::string_view::iterator rtxt = token.token_location.begin;
         unicode = 0; // oops...
         //std::size_t sz = std::strlen(rtxt);
 
         if(*crs != *rtxt) {
-            //journal::Debug() << *crs << " != " << *rtxt;
+            //book::Debug() << *crs << " != " << *rtxt;
             continue;
         }
-        //journal::Debug() << *crs << " <==> " << *rtxt;
+        //book::Debug() << *crs << " <==> " << *rtxt;
         while ((rtxt && crs) && (*crs && *rtxt) && (*crs == *rtxt))
         {
             if (*crs < 0)
@@ -1162,7 +1162,7 @@ lex_token token_table::scan(const char* C)
 
             ++crs;
             ++rtxt;
-            //journal::Debug() << *crs << " <==> " << ( rtxt ?  *rtxt : ' ');
+            //book::Debug() << *crs << " <==> " << ( rtxt ?  *rtxt : ' ');
         }
         if (!rtxt || (*rtxt == 0))
         {
@@ -1175,12 +1175,12 @@ lex_token token_table::scan(const char* C)
             token.token_location.begin = C;
             token.token_location.end = --crs;
             token.token_location.length = (token.token_location.end - token.token_location.begin)+1;
-            journal::info() << "matched : " << token.type_name() << journal::endl;
+            book::info() << "matched : " << token.type_name() << book::endl;
             return token;
         }
     }
 
-    journal::debug() << " No match." << journal::endl;
+    book::debug() << " No match." << book::endl;
     return {};
 }
 
@@ -1207,10 +1207,10 @@ token_table &token_table::operator<<(lex_token &NewToken)
 
 void token_table::dump_reference_table() const
 {
-    journal::debug() << " Dump the Tokens Reference Table:\n";
+    book::debug() << " Dump the Tokens Reference Table:\n";
 
     for(auto const& token : ref_table)
-        journal::write() << token.details();
+        book::write() << token.details();
 }
 
 
@@ -1218,20 +1218,20 @@ void token_table::dump_reference_table() const
 lex_token const &token_table::get(std::string_view mnemonic_name)
 {
     if(ref_table.empty())
-        throw journal::exception() [ journal::error() << " Tokens Reference Table is empty!"];
+        throw book::exception() [ book::error() << " Tokens Reference Table is empty!"];
 
     for(auto const& Token : ref_table)
         if(Token.name == mnemonic_name) return Token;
 
-    throw journal::exception() [ journal::error() << " Tokens identified by '" << color::yellow << mnemonic_name << color::reset << "' Is not in this table."];
+    throw book::exception() [ book::error() << " Tokens identified by '" << color::yellow << mnemonic_name << color::reset << "' Is not in this table."];
 }
 
 void token_table::dump_production_table()
 {
-    journal::debug() << " Dump the Tokens Product Table:" << journal::eol;
+    book::debug() << " Dump the Tokens Product Table:" << book::eol;
 
     for(auto const& token : prod_table)
-        journal::write() << token.details();
+        book::write() << token.details();
 }
 
 lex_token const &token_table::get(lex::mnemonic::T M)
@@ -1240,7 +1240,7 @@ lex_token const &token_table::get(lex::mnemonic::T M)
     {
         if(token.m == M) return token;
     }
-    throw journal::exception()[ journal::error()  << " Tokens identified by Enumerator " << color::yellow << static_cast<int>(M) << color::reset << " Is not in this table."];
+    throw book::exception()[ book::error()  << " Tokens identified by Enumerator " << color::yellow << static_cast<int>(M) << color::reset << " Is not in this table."];
 }
 
 

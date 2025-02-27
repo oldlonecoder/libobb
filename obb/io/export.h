@@ -64,7 +64,7 @@ pragma warning(disable : 4996)
 
 // //----------------------------------------------------------------------------
 
-// namespace lus::integers
+// namespace obb::integers
 // {
 // using Byte  = uint8_t;
 // using I8    = int8_t;

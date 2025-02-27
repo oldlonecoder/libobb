@@ -2,35 +2,35 @@
 // Created by oldlonecoder on 24-01-27.
 //
 
-#include <lus/lexer/tokens_table.h>
-#include <lus/lexer/sscan.h>
-#include <lus/geometry.h>
-#include <lus/journal.h>
+#include <obb/lexer/tokens_table.h>
+#include <obb/lexer/sscan.h>
+#include <obb/geometry.h>
+#include <obb/logbook.h>
 
 #include <format>
 
 static std::string_view NullMsg { "No String" };
 
 
-namespace lus
+namespace obb
 {
 
 
 
 
-std::map<lus::sscan::numeric::details::size_type, lex::type::T> nummap =
+std::map<obb::sscan::numeric::details::size_type, lex::type::T> nummap =
 {
-    {lus::sscan::numeric::details::size_type::I8  , lex::type::I8  },
-    {lus::sscan::numeric::details::size_type::I16 , lex::type::I16 },
-    {lus::sscan::numeric::details::size_type::I32 , lex::type::I32 },
-    {lus::sscan::numeric::details::size_type::I64 , lex::type::I64 },
-    {lus::sscan::numeric::details::size_type::U8  , lex::type::U8  },
-    {lus::sscan::numeric::details::size_type::U16 , lex::type::U16 },
-    {lus::sscan::numeric::details::size_type::U32 , lex::type::U32 },
-    {lus::sscan::numeric::details::size_type::U64 , lex::type::U64 },
-    {lus::sscan::numeric::details::size_type::F32 , lex::type::F32 },
-    {lus::sscan::numeric::details::size_type::F64 , lex::type::F64 },
-    {lus::sscan::numeric::details::size_type::F128, lex::type::F128}
+    {obb::sscan::numeric::details::size_type::I8  , lex::type::I8  },
+    {obb::sscan::numeric::details::size_type::I16 , lex::type::I16 },
+    {obb::sscan::numeric::details::size_type::I32 , lex::type::I32 },
+    {obb::sscan::numeric::details::size_type::I64 , lex::type::I64 },
+    {obb::sscan::numeric::details::size_type::U8  , lex::type::U8  },
+    {obb::sscan::numeric::details::size_type::U16 , lex::type::U16 },
+    {obb::sscan::numeric::details::size_type::U32 , lex::type::U32 },
+    {obb::sscan::numeric::details::size_type::U64 , lex::type::U64 },
+    {obb::sscan::numeric::details::size_type::F32 , lex::type::F32 },
+    {obb::sscan::numeric::details::size_type::F64 , lex::type::F64 },
+    {obb::sscan::numeric::details::size_type::F128, lex::type::F128}
 };
 
 
@@ -50,7 +50,7 @@ std::map<lus::sscan::numeric::details::size_type, lex::type::T> nummap =
 std::string_view lex_token::location_data::operator()()
 {
     if(!begin) return NullMsg;
-    //journal::debug() << " length: " << length << journal::eol;
+    //book::debug() << " length: " << length << book::eol;
     if(!end)
     {
         // In case of that token is a reference token, taken from the reference table, the end pointer is set to nullptr.
@@ -66,11 +66,11 @@ std::string_view lex_token::location_data::operator()()
 
 [[maybe_unused]] std::string lex_token::location_data::position() const
 {
-    lus::string Txt = "%d,%d";
+    obb::string Txt = "%d,%d";
     return { (Txt << line << column)() };
 }
 
-lex_token::location_data &lex_token::location_data::operator=(const lus::sscan::location_data &Data)
+lex_token::location_data &lex_token::location_data::operator=(const obb::sscan::location_data &Data)
 {
     line   = Data.line;
     column = Data.col;
@@ -83,19 +83,19 @@ lex_token::location_data &lex_token::location_data::operator=(const lus::sscan::
 
 std::string lex_token::semantic_names() const
 {
-    return lus::lexer_component::type_name(sem);
+    return obb::lexer_component::type_name(sem);
 }
 
 
 std::string lex_token::type_name() const
 {
-    return lus::lexer_component::type_name(prim);
+    return obb::lexer_component::type_name(prim);
 }
 
 
 std::string lex_token::details(bool Frame) const
 {
-    lus::string Out;
+    obb::string Out;
     auto T = text();
     Out << std::format("{:>4d},{:<4d}", token_location.column, token_location.line) <<
         color::reset << "[" <<
@@ -125,9 +125,9 @@ std::string lex_token::mark(const char* src, bool a_colorize) const
 
     while (*line_end && (*line_end != '\r') && (*line_end != '\n') ) ++line_end;
 
-    lus::string Out = std::string(line_begin, line_end);
+    obb::string Out = std::string(line_begin, line_end);
     // @todo : Colorize all tokens on the same line here.
-    Out << '\n' << std::string(token_location.column-1,' ') << lus::glyph::arrow_up;
+    Out << '\n' << std::string(token_location.column-1,' ') << obb::glyph::arrow_up;
 
     return Out();
 }
@@ -138,7 +138,7 @@ std::string lex_token::mark(const char* src, bool a_colorize) const
 void lex_token::numeric_tr()
 {
     if(num_data.seq.empty())
-        throw journal::exception()[ journal::error() << " Cannot call lex_token::numeric_tr on un-scanned or non-numeric token." ];
+        throw book::exception()[ book::error() << " Cannot call lex_token::numeric_tr on un-scanned or non-numeric token." ];
     sem = lex::type::Number | lex::type::Const | nummap[num_data.size] | lex::type::Leaf;
 }
 

@@ -1,7 +1,7 @@
-#include <lus/io/mouse.h>
+#include <obb/io/mouse.h>
 #include <bitset>
 
-namespace lus::io
+namespace obb::io
 {
 
 
@@ -34,5 +34,5 @@ mouse& mouse::operator &(const mouse &mev)
 
 
 
-} // namespace lus::io
+} // namespace obb::io
 

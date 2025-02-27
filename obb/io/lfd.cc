@@ -2,12 +2,12 @@
 // Created by oldlonecoder on 27/12/24.
 //
 
-#include <lus/io/lfd.h>
+#include <obb/io/lfd.h>
 #include <sys/ioctl.h>
 
 //#include <utility>
 
-namespace lus::io
+namespace obb::io
 {
 
 
@@ -37,7 +37,7 @@ lfd& lfd::operator<<(u8 u)
 {
     if (full())
     {
-        journal::error() << "Attempt to write into a full lfd";
+        book::error() << "Attempt to write into a full lfd";
         return *this;
     }
     *_head++ = u;
@@ -135,7 +135,7 @@ rem::action lfd::_read()
 {
     if(full())
     {
-        journal::warning() << " buffer is full" << journal::endl;
+        book::warning() << " buffer is full" << book::endl;
         pause();
         return rem::action::cont;
     }
@@ -143,14 +143,14 @@ rem::action lfd::_read()
     if(_tail > _buffer_ptr) _push_left();
 
     ioctl(_fd,FIONREAD, &_waiting_bytes);
-    //journal::debug() << " number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << _waiting_bytes << journal::endl;
+    //book::debug() << " number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << _waiting_bytes << book::endl;
 
     const auto nbytes = std::min(_waiting_bytes,free());
-    //journal::write() << " effective number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << nbytes << journal::endl;
+    //book::write() << " effective number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << nbytes << book::endl;
     if(!nbytes)
     {
 
-        journal::message() << " triggering descriptor on zero-byte signal..." << journal::eol;
+        book::message() << " triggering descriptor on zero-byte signal..." << book::eol;
         //...
         return _zero_read(*this);
     }

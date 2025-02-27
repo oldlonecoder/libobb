@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
+set (BUILD_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-project(liblus
+project(libobb
     VERSION 0.1.0
     DESCRIPTION "A non-standard c++ framework suite of my personal projects"
     LANGUAGES CXX)
@@ -13,12 +14,12 @@ OPTION(TUI          "Build the console ANSI UI  sublib..............[libobb.tui.
 OPTION(TESTS        "Build the tests................................[framework_tests_app/tests.app]" OFF)
 
 
-if(CORE)
+if(OBB)
     message(STATUS "Building liblus.a")
-    add_subdirectory(obb)
+    include(obb.cmake)
 endif()
 
-if(IOLISTENER)
+if(IO)
     message(STATUS "Building lus_iolistener.a")
     add_subdirectory(obb/io)
 endif()

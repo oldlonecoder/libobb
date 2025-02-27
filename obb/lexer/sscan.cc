@@ -19,12 +19,12 @@
 //#pragma once
 
 
-#include <lus/lexer/sscan.h>
+#include <obb/lexer/sscan.h>
 
-#include <lus/journal.h>
+#include <obb/logbook.h>
 
 
-namespace lus
+namespace obb
 {
 
 sscan sscan::numeric::empty{};
@@ -112,7 +112,7 @@ sscan::location_data &sscan::sync()
     }
     m_location.offset = m_pos - m_begin;
     // ...
-    journal::debug() << mark() << journal::endl;
+    book::debug() << mark() << book::endl;
     return m_location;
 }
 
@@ -212,10 +212,10 @@ sscan::numeric::result sscan::scan_number()
  */
 std::pair<rem::cc, std::string_view> sscan::scan_literal_string()
 {
-    lus::string Buf;
+    obb::string Buf;
     std::string_view::iterator A = m_pos;
 
-    journal::debug() << journal::endl; // Trace that we went here...
+    book::debug() << book::endl; // Trace that we went here...
     if ((*A != '\'') && (*A != '"')) return { rem::cc::rejected,{} };
     auto Q = *A++;
 
@@ -250,7 +250,7 @@ std::pair<rem::cc, std::string_view> sscan::scan_literal_string()
 std::string sscan::mark()
 {
     // 1 - Locate Beginning of the line:
-    lus::string Str;
+    obb::string Str;
     auto LBegin = m_pos;
     auto LEnd   = m_pos;
     Str << "[l:" << m_location.line << ",c:" << m_location.col << "]";
@@ -383,7 +383,7 @@ std::pair<rem::cc, std::string_view> sscan::scan_identifier()
 
 sscan::location_data const& sscan::location_data::operator>>(std::string &Out) const
 {
-    lus::string OutStr="%d,%d";
+    obb::string OutStr="%d,%d";
     OutStr << line << col;//  << Offset;
     Out = OutStr();
     return *this;
@@ -406,7 +406,7 @@ rem::cc sscan::numeric::base2()
 
 
     auto a = text();
-    lus::string buf;
+    obb::string buf;
     num_details.base = details::base_size::Binary;
 
     if(std::toupper(*a) == 'b')
@@ -467,7 +467,7 @@ rem::cc sscan::numeric::base8()
 {
     //rem::debug() << rem::fn::func;
     auto a = text();
-    lus::string buf;
+    obb::string buf;
     num_details.base = details::base_size::Octal;
 
     std::string_view prefixes = "ooq@&";
@@ -512,16 +512,16 @@ rem::cc sscan::numeric::base8()
 
 rem::cc sscan::numeric::base10()
 {
-    journal::debug() << " base 2,8,16 rejected then:" << journal::endl;
+    book::debug() << " base 2,8,16 rejected then:" << book::endl;
     auto a = text(); // get the current iterrator value...
     num_details.base = details::base_size::Decimal;
 
-    lus::string buf;
+    obb::string buf;
     //if((*a == '.') || (*a == ','))
     if(*a == '.')
     {
         real = true;
-        buf << '.'; // force '.' for convertion using lus::string >> ;
+        buf << '.'; // force '.' for convertion using obb::string >> ;
         ++a;
     }
     //rem::debug() << "decimal : a on '" << color::yellow << *a << color::reset << '\'';
@@ -578,7 +578,7 @@ rem::cc sscan::numeric::base16()
 {
     //rem::debug() << " base 2,8 rejected - then:";
     auto a = text();
-    lus::string buf;
+    obb::string buf;
     num_details.base = details::base_size::Hexadecimal;
     // do not wanna add '$'
     if (*a == '0')

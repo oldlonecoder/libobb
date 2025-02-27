@@ -18,15 +18,15 @@
 
 #pragma once
 
-#include <lus/notify.h>
+#include <obb/notify.h>
 #include <memory>
 
 
-namespace lus::cmd
+namespace obb::cmd
 {
 
 
-struct LUSLIB cmd_switch
+struct OBBLIB cmd_switch
 {
     using data = std::vector<std::string_view>;
     using shared = std::shared_ptr<cmd_switch>;
@@ -60,7 +60,7 @@ struct LUSLIB cmd_switch
 };
 
 
-class LUSLIB line
+class OBBLIB line
 {
 
     cmd_switch::array arguments;
@@ -79,7 +79,7 @@ public:
     cmd_switch::iterator query(std::string_view cmd_switch);
     cmd_switch& operator<<(const cmd_switch& Arg);
     cmd_switch& operator [] (const std::string& ArgName);
-    //journal::Enums::Code InputCmdLineData(int argc, char** argv);
+    //book::Enums::Code InputCmdLineData(int argc, char** argv);
     rem::cc     input(const std::vector<std::string_view>& StrArray);
     cmd_switch& add_cmd(const std::string& cId);
     rem::action process();

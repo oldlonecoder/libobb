@@ -23,11 +23,11 @@
 
 
 
-#include <lus/est/expression.h>
+#include <obb/est/expression.h>
 
 
 
-namespace lus::est 
+namespace obb::est 
 {
 
 
@@ -54,13 +54,13 @@ rem::cc expr::compile()
     {
         if(auto r = lex(); !r) return r;
 
-        //journal::info() << journal::fn::fun << journal::fn::endl << " Entering parse tokens:";
+        //book::info() << book::fn::fun << book::fn::endl << " Entering parse tokens:";
         _root_ = {nullptr};
-        journal::test() << journal::eol;
-        journal::write() << " testing node tree_begin(lex_token*) with valgrind leak and wr errors:";
+        book::test() << book::eol;
+        book::write() << " testing node tree_begin(lex_token*) with valgrind leak and wr errors:";
         if(_token_table_.production_table().empty())
         {
-            journal::status() << " the production tokens is empty. Leaving ";
+            book::status() << " the production tokens is empty. Leaving ";
             return rem::cc::empty;
         }
         // auto& token = *_token_table_.production_table().begin();
@@ -92,8 +92,8 @@ rem::cc expr::compile()
         }
         _root_  = _root_->close_tree();
         return rem::cc::success;
-    }catch(journal::exception& e){
-        std::cerr << "a journal::exception was thrown during the execution of the lexer. Descriptions are available after the journal::purge(...) call." << std::endl;
+    }catch(book::exception& e){
+        std::cerr << "a book::exception was thrown during the execution of the lexer. Descriptions are available after the book::purge(...) call." << std::endl;
     }catch(const std::exception& e){
         std::cerr << e.what() << std::endl;
     }
@@ -115,12 +115,12 @@ rem::cc expr::lex()
     {
         auto r = _lexer_.exec();
         auto [ic,a] = rem::return_code_attributes(r);
-        journal::status() << "lexer returns: " << a << ic  << rem::to_string(r) << color::reset << " -> ";
+        book::status() << "lexer returns: " << a << ic  << rem::to_string(r) << color::reset << " -> ";
         _token_table_.dump_production_table();    /* cc */
     }
     catch(const std::exception& e)
     {
-        std::cerr << "a journal::exception was thrown during the execution of the lexer. Descriptions are available after the journal::purge(...) call." << std::endl;
+        std::cerr << "a book::exception was thrown during the execution of the lexer. Descriptions are available after the book::purge(...) call." << std::endl;
         return rem::cc::rejected;
     }
     
@@ -132,11 +132,11 @@ rem::cc expr::lex()
 
 node *expr::make_node(lex_token *a_token)
 {
-    journal::debug() <<  rem::fn::endl << " token:" << a_token->text() << journal::eol;
+    book::debug() <<  rem::fn::endl << " token:" << a_token->text() << book::eol;
 
     if(a_token->has_type(lex::type::Id))
     {
-        journal::write() << "handling identifier '" << color::yellow << a_token->text() << color::reset << "' :";
+        book::write() << "handling identifier '" << color::yellow << a_token->text() << color::reset << "' :";
         variable* lvar = new variable(this, a_token,nullptr);
         variable* v = query_variable(a_token);
         if(v)
@@ -176,4 +176,4 @@ rem::cc expr::clear()
 
 const char* expr::source_code() { return _src_.data(); }
 
-} // namespace lus::est
+} // namespace obb::est

@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include <lus/io/lfd.h>
-#include <lus/io/kbhit.h>
-#include <lus/io/mouse.h>
+#include <obb/io/lfd.h>
+#include <obb/io/kbhit.h>
+#include <obb/io/mouse.h>
 
-namespace lus::io
+namespace obb::io
 {
 
 
@@ -69,5 +69,5 @@ private:
 
 };
 
-} // namespace lus::io
+} // namespace obb::io
 

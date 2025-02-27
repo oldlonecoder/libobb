@@ -2,7 +2,7 @@
 // Created by oldlonecoder on 8/19/24.
 //
 
-#include <lus/est/variable.h>
+#include <obb/est/variable.h>
 
 /******************************************************************************************
  *   Copyright (C) ...,2024,... by Serge Lussier                                          *
@@ -23,7 +23,7 @@
 
 
 
-namespace lus::est {
+namespace obb::est {
 variable::variable(node* a_parent_node, lex_token* a_token, alu* a_alu):node(a_parent_node, a_token, a_alu)
 {
     _token_->sem |= lex::type::Var;
@@ -35,7 +35,7 @@ alu variable::pop()
 {
     if(_stack_.empty()) 
     {
-        journal::warning() << rem::cc::rejected << "-> stack is empty; using current alu::value." << journal::eol;
+        book::warning() << rem::cc::rejected << "-> stack is empty; using current alu::value." << book::eol;
         return *_a_;
     }
     *_a_ = _stack_.top();

@@ -18,13 +18,13 @@
 
 #pragma once
 
-#include <lus/lexer/tokens_table.h>
-#include <lus/lexer/sscan.h>
+#include <obb/lexer/tokens_table.h>
+#include <obb/lexer/sscan.h>
 
 //#ifndef LEXER_LEXER_H
 //#define LEXER_LEXER_H
 
-namespace lus
+namespace obb
 {
 
 class LUSLEXERLIB lexer
@@ -47,7 +47,7 @@ public:
 
 
 protected:
-    lus::sscan scanner{};
+    obb::sscan scanner{};
     virtual rem::cc loop();
     rem::cc state{rem::cc::ok};
     void push_token(lex_token&);
