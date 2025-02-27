@@ -140,7 +140,7 @@ rem::cc listener::poll(int _fd)
     }
 
     auto nevents = epoll_wait(_epoll_fd, _poll_events, listener::max_events,-1);
-    book::info() << color::yellow << nevents << color::z << " events:" << book::endl;
+    book::info() <<  color::yellow << nevents << color::z << " event(s):" << book::endl;
     refresh_fds();
 
     if ((nevents <= 0) && (errno != EINTR))
@@ -156,7 +156,7 @@ rem::cc listener::poll(int _fd)
             if (f._flags.active)
             {
                 A = f._read(); // Actual read and process input data signal
-                //book::debug() << color::aqua << fd._id << color::z << ": [" << static_cast<int>(a) << "] " << rem::to_string(a) << book::endl;
+                book::debug() << color::aqua << f._id << color::z << ": [" << A << "] "  << book::endl;
                 if (A != rem::action::cont){
                     book::info() << "[" << A << "] active lfd to be killed."  << book::endl;
                     f.kill();
@@ -175,7 +175,7 @@ rem::cc listener::poll(int _fd)
                 return rem::cc::terminate;
             }
         }
-        return rem::cc::empty;
+        return rem::cc::ready;
     }
 
     return rem::cc::ready;
@@ -213,6 +213,17 @@ rem::cc listener::refresh_fds()
         }
     }
     return rem::cc::done;
+}
+
+
+//////////////////////////////////////////////////////
+/// \brief listener::operator []
+/// \param fd_num
+/// \return ref to the lfd instance at the given index num.
+///
+lfd &listener::operator[](int fd_num)
+{
+    return _fds[fd_num];
 }
 
 

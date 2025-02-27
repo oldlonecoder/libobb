@@ -9,6 +9,7 @@ namespace obb::io
 
 std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
 {
+    book::debug() << book::eol;
     data = {};
     if(_fd.empty())
         return {rem::cc::empty,{}};
@@ -18,7 +19,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
     {
         type = data.tev = ansi_parser::KEV;
         if(data.data.kev = kbhit::query(*_fd); data.data.kev)
-            return{rem::cc::accepted, data};
+            return{rem::cc::ready, data};
 
         data.data.kev = {kbhit::CHARACTER, *_fd, "char"};
         return {rem::cc::ready, data};
@@ -31,7 +32,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
         book::status() << "unknown or unhandled input sequence from the console." << book::eol;
         return {rem::cc::notimplemented,{}};
     }
-
+    _fd.clear();
     return {rem::cc::notimplemented,{}};
 
 }
@@ -40,10 +41,12 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
 //////////////////////////////////////////////////////////////////////////////////////
 /// \brief ansi_parser::parse_kbhit
 /// \param _fd
-/// \return
+/// \return {rem::cc, ansi_parser::input_data};
+/// \note parse_kbhit must be tested before the mouse.
 ///
 std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_kbhit(lfd &_fd)
 {
+
     return {rem::cc::notimplemented, {}};
 }
 

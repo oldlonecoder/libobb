@@ -14,16 +14,16 @@ target_include_directories(obb++.tests.app PUBLIC
 
 message("Build dir : build/")
 
-target_link_directories(obb++.tests.app PUBLIC bin)
+target_link_directories(obb++.tests.app PUBLIC build)
 
 
 
 # TABARNAK! j'joubli toujours de linker les librairies dans le bon ordre!!!!!
 target_link_libraries(obb++.tests.app
-    #obb++tui    
+    #obb++tui
     #obb++est
-    #obb++lexer    
-    obb++.io    
+    #obb++lexer
+    obb++.io
     obb++
 )
 

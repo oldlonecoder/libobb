@@ -143,10 +143,10 @@ rem::action lfd::_read()
     if(_tail > _buffer_ptr) _push_left();
 
     ioctl(_fd,FIONREAD, &_waiting_bytes);
-    //book::debug() << " number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << _waiting_bytes << book::endl;
+    book::debug() << " number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << _waiting_bytes << book::endl;
 
     const auto nbytes = std::min(_waiting_bytes,free());
-    //book::write() << " effective number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << nbytes << book::endl;
+    book::write() << " effective number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << nbytes << book::endl;
     if(!nbytes)
     {
 
@@ -155,24 +155,20 @@ rem::action lfd::_read()
         return _zero_read(*this);
     }
 
+    auto b = _head;
     ::read(_fd, _head, nbytes);
     _head += nbytes;
-
-    if(_bits & lfd::IMM)
     {
-        auto c = rem::action::enter;
-        while(!empty())
+        u64 bytes{0};
+        std::vector<int> strv{};
+        while(b <= _head)
         {
-            c = _read_ready(*this);
-            if(c == rem::action::cont)
-                continue;
-            else
-                return c;
+            strv.push_back(*b);
+            bytes = bytes << 8 | *b++;
         }
+        auto s = obb::string::bytes(strv);
+        book::debug() << s << book::eol;
     }
-    else
-        if (full())
-            return _read_ready(*this);
 
     //...
     return rem::action::cont;

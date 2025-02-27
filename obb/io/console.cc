@@ -147,7 +147,7 @@ rem::cc console::enable_mouse()
     //std::cout << MOUSE_REPORT_BUTTONS   << SET;
     std::cout << MOUSE_REPORT_ANY       << SET << std::flush;
     //std::cout << MOUSE_SGR_EXT_MODE     << SET;
-    std::cout << MOUSE_URXVT_MODE       << SET << std::flush;
+    //std::cout << MOUSE_URXVT_MODE       << SET << std::flush;
     _console->_flags |= console::use_mouse;
 
     return rem::cc::accepted;
@@ -237,6 +237,7 @@ rem::cc console::init_stdinput()
     if(auto r = _console->_listener.open(); !r)
         return r;
     auto [r,ifd] = _console->_listener.attach({"stdin",STDIN_FILENO,1024,io::lfd::IMM|io::lfd::READ, EPOLLIN|EPOLLHUP|EPOLLERR});
+
     //ifd.set_read_notify(_console, &console::parse_stdin);
     ifd.activate();
     return rem::cc::ready;
@@ -244,17 +245,33 @@ rem::cc console::init_stdinput()
 
 std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
 {
+    //@todo:
+    //try{
+    //    auto& fd = _console->_listener[STDIN_FILENO];
+    //}
+    //catch(book::exception e)
+    //{
+        // rethrow ? ...
+    //    return {rem::cc::null_ptr, {}};
+    //}
+
     auto [r, in] = _console->_listener.query_lfd(0);
     if(!r)
         throw  book::exception() [ book::except() << " console std input was not initialized prior to call this" << book::eol];
 
     if(auto r = _console->_listener.poll(0); !r){
-        book::error() << r << book::eol;
+        book::status() << "input data :" << r << book::eol;
         return {r,{}};
     }
 
     io::ansi_parser parser;
     auto [c,dt] = parser.parse(in);
+    if(dt.is<kbhit>())
+    {
+        book::info() << " Key input :" << color::yellow << dt.data.kev.name << color::z << color::z << book::eol;
+        if(dt.data.kev.code == kbhit::ESCAPE) return {rem::cc::terminate, dt};
+    }
+
     if(dt.is<io::mouse>()){
         dt.data.mev.button.left = (
             mev.button.left != dt.data.mev.button.left ? (

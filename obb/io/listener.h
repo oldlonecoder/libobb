@@ -44,7 +44,7 @@ public:
     rem::cc poll(int _fd); ///< One-shot poll check and consume at once.
     std::pair<rem::cc, io::lfd&> query_lfd(int fnum);
     rem::cc refresh_fds();
-
+    lfd& operator[](int fd_num);
     rem::cc open();
     rem::cc close();
 
