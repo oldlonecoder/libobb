@@ -20,7 +20,7 @@
 //#include <tuxvision/geometry.h>
 #include <obb/io/listener.h>
 #include <obb/io/kbhit.h>
-#include <obb/io/ansi_parser.h>
+#include <obb/io/mouse.h>
 #include <termios.h>
 
 // https://www.xfree86.org/current/ctlseqs.html
@@ -137,7 +137,26 @@ public:
 
     static rem::cc render(vchar::bloc* blk, ui::cxy xy={0,0});
     static rem::cc init_stdinput();
-    static std::pair<rem::cc, io::ansi_parser::input_data> poll_in();
+
+    struct OBBIOLIB event{
+        enum evt {KEV,MEV,WIN,UND}type{evt::UND};
+        union {
+            mouse mev;
+            kbhit kev;
+            ui::size win;
+        }data{};
+
+        template<typename EVT> bool is(){
+            if(type == KEV) return std::is_same<kbhit, EVT>();
+            if(type == MEV) return std::is_same<mouse, EVT>();
+            if(type == WIN) return std::is_same<ui::size, EVT>();
+            return false;
+        }
+        operator bool() { return type != evt::UND; }
+    };
+
+    std::pair<rem::cc, console::event> poll_in();
+
 private:
 
     rem::action parse_stdin(io::lfd& ifd);

@@ -81,6 +81,7 @@ struct OBBIOLIB mouse
 
     mouse& operator & (const mouse& mev);
     static std::pair<rem::cc, mouse> test(lfd& _fd);
+    static mouse mev;
 private:
     static std::pair<rem::cc, mouse> parse(std::vector<int>&& args_);
 };

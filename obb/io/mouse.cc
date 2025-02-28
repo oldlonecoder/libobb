@@ -32,6 +32,14 @@ mouse& mouse::operator &(const mouse &mev)
     return *this;
 }
 
+
+mouse mouse::mev{};
+///////////////////////////////////////////////////////////////////
+/// \brief mouse::test
+/// \param _fd
+/// \return
+/// \note Requiers that the first byte in _fd must be 0x1b and consumed.
+///
 std::pair<rem::cc, mouse> mouse::test(lfd &_fd)
 {
     u8 b{0};

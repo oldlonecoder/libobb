@@ -150,6 +150,13 @@ kbhit kbhit::query(std::string_view s)
     return NONE;
 }
 
+
+/////////////////////////////////////////////////////////////////////////////
+/// \brief kbhit::test
+/// \param _fd
+/// \return
+/// \note \note Requiers that the first byte in _fd must not be consumed.
+///
 std::pair<rem::cc, kbhit> kbhit::test(lfd &_fd)
 {
     auto * b = _fd.tail();
