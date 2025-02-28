@@ -32,6 +32,8 @@ lfd::~lfd()
     _write_ready.disconnect_all();
 }
 
+void lfd::sync_tail(u8 *b) { _tail = b; }
+
 
 lfd& lfd::operator<<(u8 u)
 {
@@ -164,7 +166,9 @@ rem::action lfd::_read()
         while(b <= _head)
         {
             strv.push_back(*b);
-            bytes = bytes << 8 | *b++;
+            if(strv.size() <= 8)
+                bytes = bytes << 8 | *b;
+            ++b;
         }
         auto s = obb::string::bytes(strv);
         book::debug() << s << book::eol;

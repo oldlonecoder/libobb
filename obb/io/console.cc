@@ -266,10 +266,14 @@ std::pair<rem::cc, io::ansi_parser::input_data> console::poll_in()
 
     io::ansi_parser parser;
     auto [c,dt] = parser.parse(in);
+    book::status() << c << book::eol;
     if(dt.is<kbhit>())
     {
         book::info() << " Key input :" << color::yellow << dt.data.kev.name << color::z << color::z << book::eol;
         if(dt.data.kev.code == kbhit::ESCAPE) return {rem::cc::terminate, dt};
+        book::status() << " key in" << color::yellow << dt.data.kev.name << color::z << book::eol;
+        in.clear();
+        return {rem::cc::ready, dt};
     }
 
     if(dt.is<io::mouse>()){

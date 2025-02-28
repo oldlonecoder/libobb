@@ -13,26 +13,23 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
     data = {};
     if(_fd.empty())
         return {rem::cc::empty,{}};
-    /////////////////////////////////////////////////////
-    /// Input size is 1: Either {CTRL/ALT/Command +}CHAR or ESCAPE:
-    if(_fd.size() == 1)
-    {
-        type = data.tev = ansi_parser::KEV;
-        if(data.data.kev = kbhit::query(*_fd); data.data.kev)
-            return{rem::cc::ready, data};
-
-        data.data.kev = {kbhit::CHARACTER, *_fd, "char"};
-        return {rem::cc::ready, data};
-    }
-    /////////////////////////////////////////////////////
 
     // We start CSI here : Keyboard or Mouse report:
-    if(*_fd != 0x1b)
-    {
-        book::status() << "unknown or unhandled input sequence from the console." << book::eol;
-        return {rem::cc::notimplemented,{}};
+    if(auto [r,kb] = parse_kbhit(_fd); !!r){
+        book::debug() << r << "returning key:'" <<  kb.data.kev.name << book::eol;
+        return {r,data};
     }
-    _fd.clear();
+
+
+    if(auto [s, m] = parse_csi(_fd); !!s){
+        if(m.is<mouse>())
+        {
+            book::status() << m.data.mev.pos << book::eol;
+            return {s,m};
+        }
+    }
+    //
+    book::debug() << "no where! " << book::eol;
     return {rem::cc::notimplemented,{}};
 
 }
@@ -46,7 +43,14 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse(lfd &_fd)
 ///
 std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_kbhit(lfd &_fd)
 {
-
+    auto [r, kb] = kbhit::test(_fd);
+    if(!!r)
+    {
+        input_data d{KEV};
+        d.data.kev = kb;
+        book::debug() << r << "returning key:'" <<  d.data.kev.name << book::eol;
+        return {r, d};
+    }
     return {rem::cc::notimplemented, {}};
 }
 
@@ -110,7 +114,7 @@ std::pair<rem::cc, ansi_parser::input_data> ansi_parser::parse_csi(lfd &_fd)
     std::vector<int> args{};
     if(*_fd != 0x1b)
     {
-        book::error() << rem::cc::expected << " ESC code on the buffer at the current position." << book::eol;
+        book::error() << rem::cc::expected << " ESC code on the buffer at the current position. Got '"<< color::red4 << std::format("0X{:02X}", *_fd) << color::z << "'" << book::eol;
         return {rem::cc::rejected,{}};
     }
     book::status() << "csi begin:" << book::eol;

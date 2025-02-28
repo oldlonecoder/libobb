@@ -217,6 +217,7 @@ struct OBBIOLIB kbhit
 
     static kbhit query(u64 bytes_seq);
     static kbhit query(std::string_view s);
+    static std::pair<rem::cc, kbhit> test(lfd& _fd);
     static kbhit NONE;
 
 private:

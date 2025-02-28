@@ -150,5 +150,33 @@ kbhit kbhit::query(std::string_view s)
     return NONE;
 }
 
+std::pair<rem::cc, kbhit> kbhit::test(lfd &_fd)
+{
+    auto * b = _fd.tail();
+    u64 code =0;
+    kbhit kb{};
+    if(_fd.size() == 1)
+    {
+        if(*b == 27)
+            return {rem::cc::ready,kbhit::query(27L)};
+        kb.mnemonic = kbhit::CHARACTER;
+        kb.code = 0x1b;
+        return {rem::cc::ready, kb};
+    }
+    code = code << 8 | *b;
+    ++b;
+    do{
+        code = code << 8 | *b;
+        if(kb = kbhit::query(code); kb.mnemonic != kbhit::NO_KEY)
+        {
+            book::debug() << "query code :" << color::yellow << std::format("0x{:016X}", code) << color::z << book::eol;
+            _fd.sync_tail(b);
+            return {rem::cc::ready,kb};
+        }
+        ++b;
+    }while((b - _fd.tail()) < 8 );
+    return {rem::cc::rejected,{}};
+}
+
 
 } // namespace obb::io

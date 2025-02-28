@@ -82,7 +82,9 @@ public:
     u32& operator[](u32 i) { return ((u32*)_buffer_ptr)[i]; }
     u16& operator[](u16 i) { return ((u16*)_buffer_ptr)[i]; }
     u8&  operator[](u8 i)  { return _buffer_ptr[i]; }
-
+    u8*  head() { return _head;}
+    u8*  tail() { return _tail; }
+    void sync_tail(u8* b);
     integers::i16 ntohs() const { return ::ntohs(static_cast<integers::i16>(*_tail)); }
     integers::i32 ntohl() const { return ::ntohl(static_cast<integers::i32>(*_tail)); }
     integers::i16 htons() const { return ::htons(static_cast<integers::i16>(*_tail)); }
