@@ -155,7 +155,7 @@ public:
         operator bool() { return type != evt::UND; }
     };
 
-    std::pair<rem::cc, console::event> poll_in();
+    static std::pair<rem::cc, console::event> poll_in();
 
 private:
 

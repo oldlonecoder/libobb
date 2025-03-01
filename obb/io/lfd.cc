@@ -26,6 +26,7 @@ _fd(_file_num)
 
 lfd::~lfd()
 {
+    book::debug() << "id:'" << color::yellow << _id << color::z << "' " << book::eol;
     if (_bits & lfd::EXT) return;
     delete[] _buffer_ptr;
     _read_ready.disconnect_all();

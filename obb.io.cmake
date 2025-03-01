@@ -21,7 +21,6 @@ set(HEADERS
     ${TARGET_DIR}/tcp_socket.h
     ${TARGET_DIR}/kbhit.h
     ${TARGET_DIR}/mouse.h
-    ${TARGET_DIR}/ansi_parser.h
     ${TARGET_DIR}/console.h
     ${TARGET_DIR}/vchar.h
 )
@@ -35,7 +34,6 @@ add_library(${TARGETNAME} STATIC
     ${TARGET_DIR}/tcp_socket.cc
     ${TARGET_DIR}/kbhit.cc
     ${TARGET_DIR}/mouse.cc
-    ${TARGET_DIR}/ansi_parser.cc
     ${TARGET_DIR}/console.cc
     ${TARGET_DIR}/vchar.cc
 )

@@ -16,7 +16,7 @@ listener::listener(const std::string& obj_id){}
 
 listener::~listener()
 {
-    _fds.clear();
+    //_fds.clear();
 }
 
 
