@@ -32,10 +32,46 @@ book::section::list book::sections{};
 book::section::list::iterator book::current_section{};
 
 
+std::map<rem::type, bool> book::_use_types{
+    {rem::type::err,true},
+    {rem::type::warning,true},
+    {rem::type::fatal,true},
+    {rem::type::except,true},
+    {rem::type::message,true},
+    {rem::type::output,true},
+    {rem::type::debug,true},
+    {rem::type::info,true},
+    {rem::type::comment,true},
+    {rem::type::syntax,true},
+    {rem::type::status,true},
+    {rem::type::test,true},
+    {rem::type::interrupted,true},
+    {rem::type::aborted,true},
+    {rem::type::segfault,true},
+    {rem::type::book,true}
+};
+
+static bool ENABLED_ERROR       = true;
+static bool ENABLED_WARNING     = true;
+static bool ENABLED_FATAL       = true;
+static bool ENABLED_EXCEPT      = true;
+static bool ENABLED_MESSAGE     = true;
+static bool ENABLED_OUTPUT      = true;
+static bool ENABLED_DEBUG       = true;
+static bool ENABLED_INFO        = true;
+static bool ENABLED_COMMENT     = true;
+static bool ENABLED_SYNTAX      = true;
+static bool ENABLED_STATUS      = true;
+static bool ENABLED_TEST        = true;
+static bool ENABLED_INTERRUPTED = true;
+static bool ENABLED_ABORTED     = true;
+static bool ENABLED_SEGFAULT    = true;
+static bool ENABLED_BOOK        = true;
 
 
 book &book::error(std::source_location src)
 {
+    if(!ENABLED_ERROR) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::err, rem::cc::failed, src};
     r.init_header();
@@ -45,6 +81,7 @@ book &book::error(std::source_location src)
 
 book &book::warning(std::source_location src)
 {
+    if(!ENABLED_WARNING) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::warning, rem::cc::ok, src};
     r.init_header();
@@ -54,6 +91,7 @@ book &book::warning(std::source_location src)
 
 book &book::fatal(std::source_location src)
 {
+    if(!ENABLED_FATAL ) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::fatal, rem::cc::failed, src};
     r.init_header();
@@ -63,6 +101,7 @@ book &book::fatal(std::source_location src)
 
 book &book::except(std::source_location src)
 {
+    if(!ENABLED_EXCEPT) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::except, rem::cc::rejected, src};
     r.init_header();
@@ -72,6 +111,7 @@ book &book::except(std::source_location src)
 
 book &book::message(std::source_location src)
 {
+    if(!ENABLED_MESSAGE) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::message, rem::cc::implemented, src};
     r.init_header();
@@ -81,6 +121,7 @@ book &book::message(std::source_location src)
 
 book &book::write(std::source_location src)
 {
+    if(!ENABLED_OUTPUT) return book::current_section->contents.back();
 
     book_guard.lock();
     auto& r = **book::current_section << book{};
@@ -113,6 +154,7 @@ book &book::write(std::source_location src)
 
 book &book::debug(std::source_location src)
 {
+    if(!ENABLED_DEBUG) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::debug, rem::cc::ok, src};
     r.init_header();
@@ -122,6 +164,7 @@ book &book::debug(std::source_location src)
 
 book &book::info(std::source_location src)
 {
+    if(!ENABLED_INFO) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::info, rem::cc::implemented, src};
     r.init_header();
@@ -131,6 +174,7 @@ book &book::info(std::source_location src)
 
 book &book::comment(std::source_location src)
 {
+    if(!ENABLED_COMMENT) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::comment, rem::cc::implemented, src};
     r.init_header();
@@ -140,6 +184,7 @@ book &book::comment(std::source_location src)
 
 book &book::syntax(std::source_location src)
 {
+    if(!ENABLED_SYNTAX) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::syntax, rem::cc::rejected, src};
     r.init_header();
@@ -149,6 +194,7 @@ book &book::syntax(std::source_location src)
 
 book &book::status(std::source_location src)
 {
+    if(!ENABLED_STATUS) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::status, rem::cc::implemented, src};
     r.init_header();
@@ -158,6 +204,7 @@ book &book::status(std::source_location src)
 
 book &book::test(std::source_location src)
 {
+    if(!ENABLED_TEST) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::test, rem::cc::implemented, src};
     r.init_header();
@@ -167,6 +214,7 @@ book &book::test(std::source_location src)
 
 book &book::interrupted(std::source_location src)
 {
+    if(!ENABLED_INTERRUPTED) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::interrupted, rem::cc::rejected, src};
     r.init_header();
@@ -176,6 +224,7 @@ book &book::interrupted(std::source_location src)
 
 book &book::aborted(std::source_location src)
 {
+    if(!ENABLED_ABORTED) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::aborted, rem::cc::rejected, src};
     r.init_header();
@@ -186,6 +235,7 @@ book &book::aborted(std::source_location src)
 
 book &book::segfault(std::source_location src)
 {
+    if(!ENABLED_SEGFAULT) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::segfault, rem::cc::blocked, src};
     r.init_header();
@@ -196,6 +246,7 @@ book &book::segfault(std::source_location src)
 
 book& book::jnl(std::source_location src)
 {
+    if(!ENABLED_BOOK) return book::current_section->contents.back();
     book_guard.lock();
     auto& r = **book::current_section << book{rem::type::book, rem::cc::blocked, src};
     r.init_header();

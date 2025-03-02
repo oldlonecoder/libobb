@@ -153,14 +153,21 @@ public:
             return false;
         }
         operator bool() { return type != evt::UND; }
+
+        using queue = std::deque<console::event>;
     };
 
-    static std::pair<rem::cc, console::event> poll_in();
+    static rem::cc poll_in();
     static console& get_current();
+    rem::cc enque(event&& ev);
+    console::event::queue& events() { return _que; }
+    static void push_event(console::event&& ev);
 private:
 
     rem::action parse_stdin(io::lfd& ifd);
+    static rem::cc stdin_proc();
 
+    console::event::queue _que{};
 };
 
 

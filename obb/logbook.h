@@ -49,6 +49,8 @@ class object;
 
 class OBBLIB book
 {
+    static std::map<rem::type, bool> _use_types;
+
 public:
     struct header_component
     {

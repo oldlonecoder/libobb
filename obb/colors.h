@@ -286,7 +286,8 @@ struct OBBLIB color {
         /*253 */ grey85,            //#dadada	rgb(218,218,218)	hsl(0,0%,85%)
         /*254 */ grey89,            //#e4e4e4	rgb(235,235,235)	hsl(0,0%,89%)
         /*255 */ reset,
-        /*256 */ z =255                 // final enum, same as color::reset;
+        /*255 */ r = 255,
+        /*255 */ z = 255                 // final enum, same as color::reset;
     };
 
     struct OBBLIB pair

@@ -33,6 +33,17 @@ static console* _console{nullptr};
 
 console &console::get_current() { return *_console; }
 
+rem::cc console::enque(event &&ev)
+{
+    _que.push_back(std::move(ev));
+    return rem::cc::accepted;
+}
+
+void console::push_event(event&& ev)
+{
+    _console->_que.push_back(std::move(ev));
+}
+
 
 rem::cc console::query_winch()
 {
@@ -118,10 +129,12 @@ rem::cc console::end()
 {
     if(_console->_flags & console::use_double_buffer)
         switch_back();
-
+    book::info() << "closing console state:" << book::eol;
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_st);
+    book::write() << "cursor on, disabling mouse tracking mode." << book::eol;
     cursor_on();
     stop_mouse();
+    book::write() << "closing the console polling file." << book::eol;
     close(_console->_epoll_fd);
     _console->_fd0.clear();
     return rem::cc::done;
@@ -150,8 +163,8 @@ rem::cc console::enable_mouse()
 {
     //std::cout << MOUSE_VT200            << console::SET;
     //std::cout << MOUSE_REPORT_BUTTONS   << SET;
-    std::cout << MOUSE_REPORT_ANY       << SET << std::flush;
-    //std::cout << MOUSE_SGR_EXT_MODE     << SET;
+    std::cout << MOUSE_REPORT_ANY       << SET;
+    std::cout << MOUSE_SGR_EXT_MODE     << SET<< std::flush;
     //std::cout << MOUSE_URXVT_MODE       << SET << std::flush;
     _console->_flags |= console::use_mouse;
 
@@ -162,8 +175,8 @@ rem::cc console::stop_mouse()
 {
     //std::cout << MOUSE_VT200            << RESET;
     //std::cout << MOUSE_REPORT_BUTTONS   << RESET;
-    std::cout << MOUSE_REPORT_ANY       << RESET << std::flush;
-    //std::cout << MOUSE_SGR_EXT_MODE     << RESET;
+    std::cout << MOUSE_REPORT_ANY       << RESET;
+    std::cout << MOUSE_SGR_EXT_MODE     << RESET << std::flush;
     //std::cout << MOUSE_URXVT_MODE       << RESET << std::flush;
 
     _console->_flags &= ~console::use_mouse;
@@ -215,7 +228,9 @@ void mv(ui::direction::type dir, int d)
 
 
 console::~console()
-    = default;
+{
+    std::cout << __PRETTY_FUNCTION__ << ": instance destroyed.\n";
+}
 
 
 rem::cc console::render(vchar::bloc* blk, ui::cxy xy)
@@ -248,17 +263,19 @@ rem::cc console::init_stdinput()
     }
 
     book::info() << "console epoll file # " << color::yellow << con._epoll_fd << color::z << book::eol;
+    book::info() << "Setting STDIN_FILENO to the epoll set" << book::endl;
     epoll_event e{};
     con._fd0._id = "fd #" + std::to_string(0);
     con._fd0._poll_bits = EPOLLIN|EPOLLERR|EPOLLHUP;
     con._fd0._bits = lfd::IMM | lfd::READ;
-    con._fd0._block_size = 4096;
-
-    e.events = con._fd0._poll_bits;
-    e.data.fd = con._fd0._fd;
+    con._fd0._window_block_size = 4096;
+    con._fd0._fd = STDIN_FILENO;
+    con._fd0.init();
+    e.events = EPOLLIN|EPOLLERR|EPOLLHUP;
+    e.data.fd = STDIN_FILENO;
     book::info() << "init console::_fd0:" << color::yellow << con._fd0._id << color::z << ":" <<book::endl;
 
-    if (epoll_ctl(con._epoll_fd, EPOLL_CTL_ADD, 0, &e) < 0)
+    if (epoll_ctl(con._epoll_fd, EPOLL_CTL_ADD, STDIN_FILENO, &e) < 0)
     {
         book::error() << "epoll_ctl() failed: " << std::strerror(errno) << book::endl;
         con._fd0._flags.active = 0;
@@ -268,63 +285,89 @@ rem::cc console::init_stdinput()
 }
 
 
-std::pair<rem::cc, console::event> console::poll_in()
+rem::cc console::poll_in()
 {
     auto& con = console::get_current(); // throws book::exception()[...] back to the calling point if console not init. or if it can't get the current instance.
     int nev = epoll_wait(con._epoll_fd, con._poll_events, 10,-1);
-
-    if ((nev <= 0) && (errno != EINTR))
+    //book::debug() << " number of event(s) = " << color::yellow << nev << color::z << book::eol;
+    if (nev <= 0)// && (errno != EINTR))
     {
-        book::error() << "epoll_wait() failed: (events count = " << color::yellow << nev << color::z << "): " << color::deeppink8 <<  strerror(errno) << book::endl;
-        return {rem::cc::rejected,{}};
+        //book::error() << "epoll_wait() failed: (events count = " << color::yellow << nev << color::z << "): " << color::deeppink8 <<  strerror(errno) << book::endl;
+        return rem::cc::rejected;
+    }
+    for(int n = 0; n < nev; n++){
+
+        if(con._poll_events[n].data.fd == con._fd0._fd)
+        {
+
+            if (con._poll_events[n].events & EPOLLIN)
+            {
+                if(con._fd0._read() != rem::action::cont) return rem::cc::rejected;
+                return console::stdin_proc();
+            }
+            if (con._poll_events[n].events & EPOLLERR)
+            {
+                book::error() << "epoll_wait() failed: (events count = " << color::yellow << nev << color::z << "): " << color::deeppink8 <<  strerror(errno) << book::endl;
+                return rem::cc::failed;
+            }
+            if (con._poll_events[n].events & EPOLLERR)
+            {
+                book::error() << "epoll_wait() hangup event" << book::endl;
+                return rem::cc::failed;
+            }
+        }
     }
 
-    console::event e{};
+    throw book::exception()[ book::except() << "epoll_wait seems unable to address the registered STDIN_FILENO. " << book::eol];
+}
 
-    if(auto[rcc, kb] = kbhit::test(con._fd0); !!rcc){
-        book::status() << "kbhit::Test: " << rcc << book::eol;
-        book::write() << " Key input :" << color::yellow << kb.name << color::z << color::z << book::eol;
-        e.type = event::KEV;
-        e.data.kev = kb;
-        con._fd0.clear(); // For now just clear extra-trailling data...
-        return {rem::cc::ready, e};
-    }
+rem::cc console::stdin_proc()
+{
+    auto& con = console::get_current();
+    while(!con._fd0.empty())
+    {
+        book::status() << " Test kbhit: console::events queue : " << _console->_que.size() << " awaiting events" << book::eol;
+        if(auto rcc = kbhit::test(con._fd0); !!rcc) continue;
 
-    u8 b;
-    con._fd0 >> b;
-    if(b != 27){
-        book::warning() << "non-csi byte after kbhit test: rejected and no console::event." << book::eol;
-        return {rem::cc::rejected,{}};
-    }
+        u8 b;
+        con._fd0 >> b;
+        if(b != 27){
+            book::warning() << "non-csi byte after kbhit test: rejected and no console::event." << color::red4 << std::format("0x{:02x}", b) << color::z << book::eol;
+            continue;
+        }
 
+        book::status() << " Test mouse:" << book::eol;
+        if(auto rcc = mouse::test(con._fd0); !!rcc){
+            auto& e = con._que.back();
+            if(!e.is<mouse>()) return rem::cc::failed;
+            auto& m = e.data.mev;
 
-    if(auto[rcc, m] = mouse::test(con._fd0); !!rcc){
-        e.type = event::MEV;
-        m.button.left = (
-            mouse::mev.button.left != m.button.left ? (
+            m.button.left = (
+                mouse::mev.button.left != m.button.left ? (
                     m.button.left ? io::mouse::BUTTON_PRESSED
                                   : io::mouse::BUTTON_RELEASE
-            ) : m.button.left
-        );
-        m.button.right = (
-            mouse::mev.button.right != m.button.right ? (
+                ) : m.button.left
+            );
+            m.button.right = (
+                mouse::mev.button.right != m.button.right ? (
                     m.button.right ? io::mouse::BUTTON_PRESSED
                                    : io::mouse::BUTTON_RELEASE
-            ) : m.button.right
-        );
-        m.button.mid = (
-            mouse::mev.button.mid != m.button.mid ? (
+                    ) : m.button.right
+            );
+            m.button.mid = (
+                mouse::mev.button.mid != m.button.mid ? (
                     m.button.mid ? io::mouse::BUTTON_PRESSED
                                  : io::mouse::BUTTON_RELEASE
-            ) : m.button.mid
-        );
+                ) : m.button.mid
+            );
 
-        m.dxy = m.pos - mouse::mev.pos;
-        mouse::mev = e.data.mev = m;
-        return {rem::cc::ready, e};
+            m.dxy = m.pos - mouse::mev.pos;
+            mouse::mev = m;
+            book::info() << "mouse delta: " << color::yellow << m.dxy << book::eol;
+        }
     }
 
-    return {rem::cc::rejected,{}};
+    return rem::cc::ready;
 }
 
 

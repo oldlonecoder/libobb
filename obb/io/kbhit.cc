@@ -18,7 +18,7 @@
 
 
 #include <obb/io/kbhit.h>
-
+#include <obb/io/console.h>
 
 namespace obb::io
 {
@@ -40,7 +40,7 @@ kbhit::dbgroup kbhit::keys_db
     {ARROW_LEFT                 ,0x00000000001b5b44,"ArrowLeft"             },
     {ARROW_RIGHT                ,0x00000000001b5b43,"ArrowRight"            },
     {ENTER                      ,0x000000000000000A,"Enter"                 },
-    {ESCAPE                     ,0x000000000000001b,"ESC"                   },
+    {ESCAPE                     ,0x000000000000001b,"ESCAPE/CANCEL/DISMISS" },
     {BACKSPACE                  ,0x000000000000007F,"BackSpace"             },
     {HOME                       ,0x00000000001b5b48,"HOME"                  },
     {END                        ,0x00000000001b5b46,"End"                   },
@@ -128,9 +128,9 @@ kbhit::dbgroup kbhit::keys_db
 
 
 
-kbhit::operator bool() const
+kbhit::operator bool()
 {
-    return code != kbhit::NO_KEY;
+    return code != 0;
 }
 
 
@@ -157,18 +157,28 @@ kbhit kbhit::query(std::string_view s)
 /// \return
 /// \note \note Requiers that the first byte in _fd must not be consumed.
 ///
-std::pair<rem::cc, kbhit> kbhit::test(lfd &_fd)
+rem::cc kbhit::test(lfd &_fd)
 {
     auto * b = _fd.tail();
     u64 code =0;
     kbhit kb{};
     if(_fd.size() == 1)
     {
+        book::debug() << " CHAR or CMD : " << (int)*b << book::eol;
         if(*b == 27)
-            return {rem::cc::ready,kbhit::query(27L)};
+        {
+            kb = kbhit::query((u64)0x1b);
+            _fd >> *b; // OOps N'oubliez surtout point de con-sommer le byte! MIAM!
+            //console::event e = {.type = console::event::evt::KEV, .data={.kev=kb}};
+            console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
+            return rem::cc::ready;
+        }
+
         kb.mnemonic = kbhit::CHARACTER;
-        kb.code = 0x1b;
-        return {rem::cc::ready, kb};
+        kb.code = *b;
+        _fd >> *b;
+        console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
+        return rem::cc::ready;
     }
     code = code << 8 | *b;
     ++b;
@@ -178,11 +188,12 @@ std::pair<rem::cc, kbhit> kbhit::test(lfd &_fd)
         {
             book::debug() << "query code :" << color::yellow << std::format("0x{:016X}", code) << color::z << book::eol;
             _fd.sync_tail(b);
-            return {rem::cc::ready,kb};
+            console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
+            return rem::cc::ready;
         }
         ++b;
     }while((b - _fd.tail()) < 8 );
-    return {rem::cc::rejected,{}};
+    return rem::cc::rejected;
 }
 
 

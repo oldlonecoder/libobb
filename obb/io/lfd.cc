@@ -26,7 +26,7 @@ _fd(_file_num)
 
 lfd::~lfd()
 {
-    book::debug() << "id:'" << color::yellow << _id << color::z << "' " << book::eol;
+    //book::debug() << "id:'" << color::yellow << _id << color::z << "' " << book::eol;
     if (_bits & lfd::EXT) return;
     delete[] _buffer_ptr;
     _read_ready.disconnect_all();
@@ -84,12 +84,14 @@ rem::cc lfd::init()
 
     if(!(_bits & lfd::EXT))
     {    delete [] _buffer_ptr;
+        book::info() << " Allocating " << color::yellow << _window_block_size << color::z << " bytes to lfd:"  << _id <<  book::eol;
         _buffer_ptr = new u8[_window_block_size+2];
     }
 
     std::memset(_buffer_ptr,0,_window_block_size);
     _tail = _head = _buffer_ptr;
     _end    = _buffer_ptr + _window_block_size;
+    book::info() <<  color::yellow << free() << color::z << " bytes free." << book::eol;
 
     // ...
 
@@ -146,10 +148,16 @@ rem::action lfd::_read()
     if(_tail > _buffer_ptr) _push_left();
 
     ioctl(_fd,FIONREAD, &_waiting_bytes);
-    book::debug() << " number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << _waiting_bytes << book::endl;
-
+    //book::debug() << " number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << _waiting_bytes << book::endl;
+    if(_waiting_bytes < 0)
+    {
+        book::error() << "decriptor #" << color::red4 << _fd << color::reset << " :" << color::red << std::strerror(errno) << color::z << book::endl;
+        return rem::action::end;
+    }
+    //book::info() <<  color::yellow << free() << color::z << " bytes free." << book::eol;
     const auto nbytes = std::min(_waiting_bytes,free());
-    book::write() << " effective number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << nbytes << book::endl;
+    //book::write() << " effective number of bytes to read in #" << color::yellow << _fd << color::reset << ":" << color::lime << nbytes << book::endl;
+
     if(!nbytes)
     {
 
@@ -172,7 +180,7 @@ rem::action lfd::_read()
             ++b;
         }
         auto s = obb::string::bytes(strv);
-        book::debug() << s << book::eol;
+        book::debug() << color::yellow << nbytes << color::r << " bytes: {" << color::lighcoreateblue << s << color::r << "}" << book::eol;
     }
 
     //...

@@ -308,7 +308,7 @@ std::string string::bytes(std::vector<int> a_seq)
     int c = 0;
     for(auto n  : a_seq)
     {
-        outstr += std::format("{:02x}/{:d}", n,n);
+        outstr += std::format("x{:02x}|u{:d}", n,n);
         if(c++ < (a_seq.size()-1)) outstr += ',';
     }
 

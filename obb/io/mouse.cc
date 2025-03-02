@@ -1,5 +1,6 @@
 #include <obb/io/mouse.h>
 #include <bitset>
+#include <obb/io/console.h>
 
 namespace obb::io
 {
@@ -28,6 +29,7 @@ mouse& mouse::operator &(const mouse &mev)
     }
 
     dxy = pos - mev.pos;
+
     // todo : Where do I put mouse move event ??
     return *this;
 }
@@ -40,14 +42,15 @@ mouse mouse::mev{};
 /// \return
 /// \note Requiers that the first byte in _fd must be 0x1b and consumed.
 ///
-std::pair<rem::cc, mouse> mouse::test(lfd &_fd)
+rem::cc mouse::test(lfd &_fd)
 {
     u8 b{0};
     int arg{0};
     std::vector<int> args{};
-    book::status() << "csi begin:" << book::eol;
+    //book::status() << "csi begin: @'" << color::yellow << (char)*_fd << color::z << '\'' << book::eol;
     do{
         _fd >> b;
+        //book::status() << "@'" << color::yellow << (char)*_fd << color::z << '\'' << book::eol;
         if(b == '<'){
             book::write() << "Altered [ ignored as of now ]" << book::eol;
             //...
@@ -72,35 +75,39 @@ std::pair<rem::cc, mouse> mouse::test(lfd &_fd)
         // To handle F1-F4, we exclude '['.
         if ((b >= '@') && (b <= '~') && (b != '<') && (b != '[')){
             args.push_back(arg);
-            book::status() << "end csi sequence on '" << color::yellow << b << color::z << "' :" << book::eol;
+            //book::status() << "end csi sequence on '" << color::yellow << (int)b << color::z << "' :" << book::eol;
             switch(b)
             {
                 case 'M' : case 'm':
                     return parse(std::move(args));
                 case 'R':
                     book::warning() <<" R :Caret report - ignored" << book::eol;
-                    return {rem::cc::notimplemented,{}};
+                    break;
                 default:
                     book::error() << " Unhandled csi sequence. " << book::eol;
                     break;
             }
-            return {rem::cc::rejected,{}};
+            return rem::cc::rejected;
         }
 
     }while(!_fd.empty());
-    return {rem::cc::unhandled,{}};
-    return {rem::cc::notimplemented,{}};
+    return {};
 }
 
-std::pair<rem::cc, mouse> mouse::parse(std::vector<int> &&args_)
+mouse::operator bool()
+{
+    return true;
+}
+
+rem::cc mouse::parse(std::vector<int> &&args_)
 {
     // pressed 'flag' ignored. Relying on the XTerm Button and meta state byte which reports buttons on the lasts two bits:
-                                                                                                                           book::debug() << book::endl;
+    book::debug() << book::endl;
     mouse mev{};
 
     if (args_.size() != 3){
         book::error() << " missing or extra arguments : expected 3, got " << color::yellow << args_.size() << book::eol;
-        return {rem::cc::rejected,{}};
+        return rem::cc::rejected;;
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -120,7 +127,9 @@ std::pair<rem::cc, mouse> mouse::parse(std::vector<int> &&args_)
     // Subtract 1 from the coords. Because the terminal starts at 1,1 and our ui system starts 0,0
     mev.pos.x = args_[1]-1;
     mev.pos.y = args_[2]-1;
-    return {rem::cc::ready,mev};
+    book::info() << "mouse position:" << color::yellow << mev.pos << color::z << book::eol;
+    console::push_event({.type = console::event::evt::MEV, .data={.mev=mev}});
+    return rem::cc::ready;
 }
 
 

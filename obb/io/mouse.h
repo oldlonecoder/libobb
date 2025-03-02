@@ -80,10 +80,11 @@ struct OBBIOLIB mouse
     bool right  (){return button.right;}
 
     mouse& operator & (const mouse& mev);
-    static std::pair<rem::cc, mouse> test(lfd& _fd);
+    static rem::cc test(lfd& _fd);
     static mouse mev;
+    operator bool();
 private:
-    static std::pair<rem::cc, mouse> parse(std::vector<int>&& args_);
+    static rem::cc parse(std::vector<int>&& args_);
 };
 
 } // namespace obb::io
