@@ -53,14 +53,14 @@ class OBBIOLIB console
 
 
     int _epoll_fd{-1};
+    epoll_event _poll_events[10]{};
+    lfd _fd0{};
     ui::rectangle _window{};    ///< Virtual console buffers size.
     ui::size      _phys_size{}; ///< Physical console Width|Height.
     ui::cxy       _window_pos{};///< topleft position of the console buffer in the _window.
     static termios  saved_st, new_term;
     signals::notify_action<ui::rectangle> _window_resize_signal{"console resize signal notifier"};
     static void resize_signal(int );
-
-    io::listener _listener{}; ///< Open persistent (program's life-time) epoll fd.
 
 public:
 
@@ -156,7 +156,7 @@ public:
     };
 
     static std::pair<rem::cc, console::event> poll_in();
-
+    static console& get_current();
 private:
 
     rem::action parse_stdin(io::lfd& ifd);

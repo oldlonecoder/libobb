@@ -46,7 +46,7 @@ class OBBIOLIB lfd
     std::string _id{"unnamed"};
     u16 _bits{0};
     u16  _poll_bits{0};
-
+    friend class console;
     struct flags
     {
         u8 active :1; ///< This lfd is active and monitored. - If not active then it is not monitored...Obviously ;)

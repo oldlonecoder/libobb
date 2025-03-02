@@ -21,6 +21,7 @@ termios  console::saved_st{}, console::new_term{};
 
 
 
+
 signals::notify_action<rectangle>& console::term_resize_signal()
 {
     return _window_resize_signal;
@@ -28,6 +29,9 @@ signals::notify_action<rectangle>& console::term_resize_signal()
 
 
 static console* _console{nullptr};
+
+
+console &console::get_current() { return *_console; }
 
 
 rem::cc console::query_winch()
@@ -118,7 +122,8 @@ rem::cc console::end()
     tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_st);
     cursor_on();
     stop_mouse();
-    _console->_listener.close();
+    close(_console->_epoll_fd);
+    _console->_fd0.clear();
     return rem::cc::done;
 }
 
@@ -234,55 +239,66 @@ static io::mouse mev{};
  */
 rem::cc console::init_stdinput()
 {
-    if(auto r = _console->_listener.open(); !r)
-        return r;
-    auto [r,ifd] = _console->_listener.attach({"stdin",STDIN_FILENO,1024,io::lfd::IMM|io::lfd::READ, EPOLLIN|EPOLLHUP|EPOLLERR});
+    console& con = *_console;
+    con._epoll_fd = epoll_create1(0);
+    if (con._epoll_fd < 0)
+    {
+        book::error() << "epoll_create1() failed: " << strerror(errno) << book::endl;
+        return rem::cc::rejected;
+    }
 
-    //ifd.set_read_notify(_console, &console::parse_stdin);
-    ifd.activate();
+    book::info() << "console epoll file # " << color::yellow << con._epoll_fd << color::z << book::eol;
+    epoll_event e{};
+    con._fd0._id = "fd #" + std::to_string(0);
+    con._fd0._poll_bits = EPOLLIN|EPOLLERR|EPOLLHUP;
+    con._fd0._bits = lfd::IMM | lfd::READ;
+    con._fd0._block_size = 4096;
+
+    e.events = con._fd0._poll_bits;
+    e.data.fd = con._fd0._fd;
+    book::info() << "init console::_fd0:" << color::yellow << con._fd0._id << color::z << ":" <<book::endl;
+
+    if (epoll_ctl(con._epoll_fd, EPOLL_CTL_ADD, 0, &e) < 0)
+    {
+        book::error() << "epoll_ctl() failed: " << std::strerror(errno) << book::endl;
+        con._fd0._flags.active = 0;
+    }
+    book::write() << "console input polls ready to run" << book::endl;
     return rem::cc::ready;
 }
 
 
 std::pair<rem::cc, console::event> console::poll_in()
 {
-    //@todo:
-    //try{
-    //    auto& fd = _console->_listener[STDIN_FILENO];
-    //}
-    //catch(book::exception e)
-    //{
-        // rethrow ? ...
-    //    return {rem::cc::null_ptr, {}};
-    //}
+    auto& con = console::get_current(); // throws book::exception()[...] back to the calling point if console not init. or if it can't get the current instance.
+    int nev = epoll_wait(con._epoll_fd, con._poll_events, 10,-1);
 
-    auto [r, in] = _console->_listener.query_lfd(0);
-    if(!r)
-        throw  book::exception() [ book::except() << " console std input was not initialized prior to call this" << book::eol];
-
-    if(auto r = _console->_listener.poll(0); !r){
-        book::status() << "input data :" << r << book::eol;
-        return {r,{}};
+    if ((nev <= 0) && (errno != EINTR))
+    {
+        book::error() << "epoll_wait() failed: (events count = " << color::yellow << nev << color::z << "): " << color::deeppink8 <<  strerror(errno) << book::endl;
+        return {rem::cc::rejected,{}};
     }
 
     console::event e{};
-    if(auto[rcc, kb] = kbhit::test(in); !!rcc){
+
+    if(auto[rcc, kb] = kbhit::test(con._fd0); !!rcc){
         book::status() << "kbhit::Test: " << rcc << book::eol;
         book::write() << " Key input :" << color::yellow << kb.name << color::z << color::z << book::eol;
         e.type = event::KEV;
         e.data.kev = kb;
-        in.clear();
+        con._fd0.clear(); // For now just clear extra-trailling data...
         return {rem::cc::ready, e};
     }
-    u8 b;
-    in >> b;
-    if(b != 27){
 
+    u8 b;
+    con._fd0 >> b;
+    if(b != 27){
+        book::warning() << "non-csi byte after kbhit test: rejected and no console::event." << book::eol;
         return {rem::cc::rejected,{}};
     }
 
 
-    if(auto[rcc, m] = mouse::test(in); !!rcc){
+    if(auto[rcc, m] = mouse::test(con._fd0); !!rcc){
         e.type = event::MEV;
         m.button.left = (
             mouse::mev.button.left != m.button.left ? (
@@ -310,6 +326,7 @@ std::pair<rem::cc, console::event> console::poll_in()
 
     return {rem::cc::rejected,{}};
 }
+
 
 
 }// namespace lux::io
