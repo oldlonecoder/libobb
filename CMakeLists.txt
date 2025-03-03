@@ -22,6 +22,11 @@ endif()
 if(IO)
     message(STATUS "Building libobb.io.a")
     include(obb.io.cmake)
+
+target_sources(io
+  PRIVATE
+    obb/io/terminal.h obb/io/terminal.cc
+)
 endif()
 
 if(LEXER)

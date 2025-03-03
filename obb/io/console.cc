@@ -17,9 +17,9 @@
 namespace obb::io
 {
 
-termios  console::saved_st{}, console::new_term{};
 
 
+console::console_list console::cons{};
 
 
 signals::notify_action<rectangle>& console::term_resize_signal()
@@ -91,11 +91,14 @@ console::console(const std::string& name, u8 _flags_):_flags(_flags_) { _console
 
     @author  Serge Lussier ( serge.lussier@oldlonecoder.club )
 */
-rem::cc console::begin()
+rem::cc console::begin(std::string_view name_id)
 {
     if(auto c = console::query_winch(); !c)
         book::error() << rem::cc::failed << " to get the screen geometry - there will be no boudaries checks. " << book::endl;
+    if(console::cons[name_id.data()] != nullptr)
+    {
 
+    }
 
     tcgetattr(STDIN_FILENO, &saved_st);
     new_term = saved_st;

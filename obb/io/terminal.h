@@ -1,23 +1,7 @@
-/******************************************************************************************
- *   Copyright (C) ...,2024,... by Serge Lussier                                          *
- *   serge.lussier@oldlonecoder.club                                                      *
- *   ----------------------------------------------------------------------------------   *
- *   Unless otherwise specified, all Code IsIn this project is written                    *
- *   by the author (Serge Lussier).                                                       *
- *   ----------------------------------------------------------------------------------   *
- *   Copyrights from authors other than Serge Lussier also apply here.                    *
- *   Open source FREE licences also apply To the Code from the author (Serge Lussier)     *
- *   ----------------------------------------------------------------------------------   *
- *   Usual GNU FREE GPL-1,2, MIT... apply to this project.                                *
- ******************************************************************************************/
-
-
-#pragma once
-
 #include <obb/io/vchar.h>
 #include <obb/notify.h>
 #include <obb/object.h>
-//#include <tuxvision/geometry.h>
+#include <obb/geometry.h>
 #include <obb/io/listener.h>
 #include <obb/io/kbhit.h>
 #include <obb/io/mouse.h>
@@ -34,14 +18,30 @@
 namespace obb::io
 {
 
-class OBBIOLIB console
-{
+class terminal;
 
-    CLASSNAME(console);
+namespace terminals
+{
+    terminal& new_terminal(terminal* parent_terminal, const std::string& id);
+//...
+}
+
+
+
+
+
+class OBBIOLIB terminal : public object
+{
+    struct termios _saved{}, _this{};
+    // - The other structs when I will implement and use sub terminals in virtual pty.
+    // ...
+    //--------------------------------------------------------------------------------------
+    ui::rectangle  _geometry{}; ///< Has implied : inner cursor, topleft position and dimensions.
+    ui::color::pair _colors{};
+
     u8 _flags{0};
     u8 _state{0};
 
-    ui::cxy            _cursor_pos{0,0};
 
     static constexpr u8 st_saved         = 1;
     static constexpr u8 st_mouse_enabled = 2;
@@ -53,15 +53,10 @@ class OBBIOLIB console
 
 
     int _epoll_fd{-1};
-    epoll_event _poll_events[10]{};
+    epoll_event _poll_events[4]{};
     lfd _fd0{};
-    ui::rectangle _window{};    ///< Virtual console buffers size.
-    ui::size      _phys_size{}; ///< Physical console Width|Height.
-    ui::cxy       _window_pos{};///< topleft position of the console buffer in the _window.
-    termios  saved_st, new_term;
     signals::notify_action<ui::rectangle> _window_resize_signal{"console resize signal notifier"};
-    static void resize_signal(int );
-
+    void resize_signal(int );
 public:
 
     static constexpr u8 use_mouse               = 1;
@@ -81,7 +76,6 @@ public:
         vbar_blink,
         vbar_steady
     }cursor_shape{def};
-
 
 
     static constexpr auto LINE_WRAP                 = "7";
@@ -108,35 +102,26 @@ public:
     static constexpr auto CSI_UNDERLINE_INCREMENT   = "\x1b[93m";
     static constexpr auto CSI_UNDERLINE_DECREMENT   = "\x1b[94m";
 
+    terminal() = default;
+    terminal(terminal* parent_term, const std::string& _name_id, ui::rectangle dim /* , ... */);
+    ~terminal() override;
 
-    signals::notify_action<ui::rectangle>& term_resize_signal();
+    rectangle geometry();
+    rem::cc enable_mouse();
+    rem::cc stop_mouse();
+    rem::cc query_winch();
+    rem::cc begin(std::string_view name_id);
+    rem::cc end();
 
-    //rem::cc update_widget(object* _widget);
+    void switch_alternate();
+    void switch_back();
+    void clear();
+    void cursor_off();
+    void cursor_on();
+    bool cursor(ui::cxy xy);
 
-    console()=default;
-    explicit console(const std::string& name,u8 _flags_=0);
-
-    ~console();
-
-
-
-    static rectangle geometry();
-    static rem::cc enable_mouse();
-    static rem::cc stop_mouse();
-    static rem::cc query_winch();
-    static rem::cc begin(std::string_view name_id);
-    static rem::cc end();
-
-    static void switch_alternate();
-    static void switch_back();
-    static void clear();
-    static void cursor_off();
-    static void cursor_on();
-    static void cursor(ui::cxy xy);
-    //static rem::cc mv(ui::direction::type dir=ui::direction::right, int d=1);
-
-    static rem::cc render(vchar::bloc* blk, ui::cxy xy={0,0});
-    static rem::cc init_stdinput();
+    rem::cc render(vchar::bloc* blk, ui::cxy xy={0,0});
+    rem::cc init_stdinput();
 
     struct OBBIOLIB event{
         enum evt {KEV,MEV,WIN,UND}type{evt::UND};
@@ -154,26 +139,30 @@ public:
         }
         operator bool() { return type != evt::UND; }
 
-        using queue = std::deque<console::event>;
+        using queue = std::deque<terminal::event>;
     };
 
-    static rem::cc poll_in();
-    static console& get_current();
+    rem::cc poll_in();
+    terminal& get_current();
     rem::cc enque(event&& ev);
-    console::event::queue& events() { return _que; }
-    static void push_event(console::event&& ev);
+    terminal::event::queue& events() { return _events; }
+    void push_event(terminal::event&& ev);
 
 private:
 
     rem::action parse_stdin(io::lfd& ifd);
-    static rem::cc stdin_proc();
+    rem::cc stdin_proc();
 
-    console::event::queue _que{};
+    terminal::event::queue _events{};
 
-    using console_list = std::map<std::string, console*>;
-    static console_list cons;
+    friend terminal& new_terminal(terminal* parent_terminal, const std::string& id);
 
+    using termslist = std::map<std::string&, terminal*>;
 };
 
 
-} //namespace tux::io
+
+
+
+
+} // namespace obb::io
