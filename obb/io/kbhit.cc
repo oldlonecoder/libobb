@@ -180,6 +180,7 @@ rem::cc kbhit::test(lfd &_fd)
         console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
         return rem::cc::ready;
     }
+
     code = code << 8 | *b;
     ++b;
     do{

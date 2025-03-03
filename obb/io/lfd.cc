@@ -33,7 +33,7 @@ lfd::~lfd()
     _write_ready.disconnect_all();
 }
 
-void lfd::sync_tail(u8 *b) { _tail = b; }
+void lfd::sync_tail(u8 *b) { _tail = b; if(empty()) clear();}
 
 
 lfd& lfd::operator<<(u8 u)

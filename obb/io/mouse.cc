@@ -91,7 +91,8 @@ rem::cc mouse::test(lfd &_fd)
         }
 
     }while(!_fd.empty());
-    return {};
+    _fd.clear();
+    return rem::cc::ready;
 }
 
 mouse::operator bool()
