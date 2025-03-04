@@ -18,7 +18,7 @@
 
 
 #include <obb/io/kbhit.h>
-#include <obb/io/console.h>
+#include <obb/io/terminal.h>
 
 namespace obb::io
 {
@@ -169,15 +169,15 @@ rem::cc kbhit::test(lfd &_fd)
         {
             kb = kbhit::query((u64)0x1b);
             _fd >> *b; // OOps N'oubliez surtout point de con-sommer le byte! MIAM!
-            //console::event e = {.type = console::event::evt::KEV, .data={.kev=kb}};
-            console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
+            //terminal::event e = {.type = terminal::event::evt::KEV, .data={.kev=kb}};
+            terminal::push_event({.type = terminal::event::evt::KEV, .data={.kev=kb}});
             return rem::cc::ready;
         }
 
         kb.mnemonic = kbhit::CHARACTER;
         kb.code = *b;
         _fd >> *b;
-        console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
+        terminal::push_event({.type = terminal::event::evt::KEV, .data={.kev=kb}});
         return rem::cc::ready;
     }
 
@@ -189,7 +189,7 @@ rem::cc kbhit::test(lfd &_fd)
         {
             book::debug() << "query code :" << color::yellow << std::format("0x{:016X}", code) << color::z << book::eol;
             _fd.sync_tail(b);
-            console::push_event({.type = console::event::evt::KEV, .data={.kev=kb}});
+            terminal::push_event({.type = terminal::event::evt::KEV, .data={.kev=kb}});
             return rem::cc::ready;
         }
         ++b;

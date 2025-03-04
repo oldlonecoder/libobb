@@ -132,13 +132,12 @@ public:
     };
 
     rem::cc poll_in();
-    terminal& get_current();
     rem::cc enque(event&& ev);
     terminal::event::queue& events() { return _events; }
-    void push_event(terminal::event&& ev);
+    static void push_event(terminal::event&& ev);
 
 private:
-
+    static terminal* _terminal; ///< temporairemnent juste pour push_event.
     rem::action parse_stdin(io::lfd& ifd);
     rem::cc stdin_proc();
 

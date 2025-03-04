@@ -3,7 +3,7 @@
 namespace obb::io
 {
 
-
+terminal* terminal::_terminal{nullptr};
 
 signals::notify_action<rectangle>& terminal::term_resize_signal()
 {
@@ -24,7 +24,7 @@ rem::cc terminal::enque(event &&ev)
 
 void terminal::push_event(event&& ev)
 {
-    _events.push_back(std::move(ev));
+    _terminal->_events.push_back(std::move(ev));
 }
 
 
@@ -66,7 +66,10 @@ rectangle terminal::geometry() { return _geometry; }
 
 terminal::terminal(terminal *parent_term, const std::string &_name_id, rectangle dim) : object(parent_term,_name_id),
     _geometry(dim)
-{}
+{
+    if(_terminal) return ;
+    _terminal = this;
+}
 
 /*!
     @brief (static) terminal::begin()
@@ -269,8 +272,7 @@ rem::cc terminal::init_stdinput()
 
 rem::cc terminal::poll_in()
 {
-    auto& con = terminal::get_current(); // throws book::exception()[...] back to the calling point if terminal not init. or if it can't get the current instance.
-    int nev = epoll_wait(_epoll_fd, _poll_events, 10,-1);
+    int nev = epoll_wait(_epoll_fd, _poll_events, 1,-1);
     //book::debug() << " number of event(s) = " << color::yellow << nev << color::z << book::eol;
     if (nev <= 0)// && (errno != EINTR))
     {
@@ -305,10 +307,10 @@ rem::cc terminal::poll_in()
 
 rem::cc terminal::stdin_proc()
 {
-    auto& con = terminal::get_current();
+
     while(!_fd0.empty())
     {
-        book::status() << " Test kbhit: terminal::events queue : " << _events.size() << " awaiting events" << book::eol;
+        book::status() << " Test kbhit: terminal::events queue : " << _events.size() << " awaiting events to process..." << book::eol;
         if(auto rcc = kbhit::test(_fd0); !!rcc) continue;
 
         u8 b;

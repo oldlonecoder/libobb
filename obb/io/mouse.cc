@@ -1,6 +1,6 @@
 #include <obb/io/mouse.h>
 #include <bitset>
-#include <obb/io/console.h>
+#include <obb/io/terminal.h>
 
 namespace obb::io
 {
@@ -129,7 +129,7 @@ rem::cc mouse::parse(std::vector<int> &&args_)
     mev.pos.x = args_[1]-1;
     mev.pos.y = args_[2]-1;
     book::info() << "mouse position:" << color::yellow << mev.pos << color::z << book::eol;
-    console::push_event({.type = console::event::evt::MEV, .data={.mev=mev}});
+    terminal::push_event({.type = terminal::event::evt::MEV, .data={.mev=mev}});
     return rem::cc::ready;
 }
 
