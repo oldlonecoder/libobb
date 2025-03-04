@@ -170,8 +170,6 @@ private:
 
     console::event::queue _que{};
 
-    using console_list = std::map<std::string, console*>;
-    static console_list cons;
 
 };
 

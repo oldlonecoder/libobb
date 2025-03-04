@@ -18,17 +18,6 @@
 namespace obb::io
 {
 
-class terminal;
-
-namespace terminals
-{
-    terminal& new_terminal(terminal* parent_terminal, const std::string& id);
-//...
-}
-
-
-
-
 
 class OBBIOLIB terminal : public object
 {
@@ -37,7 +26,7 @@ class OBBIOLIB terminal : public object
     // ...
     //--------------------------------------------------------------------------------------
     ui::rectangle  _geometry{}; ///< Has implied : inner cursor, topleft position and dimensions.
-    ui::color::pair _colors{};
+    ui::color::pair _colors{};  ///< Fallback/restore original/reset colors.
 
     u8 _flags{0};
     u8 _state{0};
@@ -55,7 +44,7 @@ class OBBIOLIB terminal : public object
     int _epoll_fd{-1};
     epoll_event _poll_events[4]{};
     lfd _fd0{};
-    signals::notify_action<ui::rectangle> _window_resize_signal{"console resize signal notifier"};
+    signals::notify_action<ui::rectangle> _window_resize_signal{"terminal resize signal notifier"};
     void resize_signal(int );
 public:
 
@@ -155,9 +144,11 @@ private:
 
     terminal::event::queue _events{};
 
-    friend terminal& new_terminal(terminal* parent_terminal, const std::string& id);
+    using termslist = std::map<std::string, terminal*>;
+    static termslist terms;
 
-    using termslist = std::map<std::string&, terminal*>;
+
+    signals::notify_action<rectangle>& term_resize_signal();
 };
 
 

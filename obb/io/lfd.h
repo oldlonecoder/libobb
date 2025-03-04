@@ -130,6 +130,7 @@ private:
 
     void _push_left();
     friend class ipoll;
+    friend class terminal;
 
 };
 

@@ -19,7 +19,7 @@ namespace obb::io
 
 
 
-console::console_list console::cons{};
+
 
 
 signals::notify_action<rectangle>& console::term_resize_signal()
@@ -103,7 +103,8 @@ rem::cc console::begin(std::string_view name_id)
     tcgetattr(STDIN_FILENO, &saved_st);
     new_term = saved_st;
 
-    new_term.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | IGNCR | IXON );
+    //new_term.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | IGNCR | IXON );
+    new_term.c_iflag &= ~(BRKINT | PARMRK | ISTRIP | IGNCR | IXON );
     new_term.c_oflag &= ~OPOST;
     new_term.c_cflag |= (CS8);
     new_term.c_cflag &= ~PARENB;
